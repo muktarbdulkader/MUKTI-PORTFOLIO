@@ -6,6 +6,7 @@ import { Field, Input, Textarea } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ConfirmButton } from "@/components/ui/confirm-button";
+import { useI18n } from "@/lib/i18n/provider";
 import { Badge } from "@/components/ui/badge";
 import {
   createService,
@@ -26,6 +27,7 @@ const EMPTY = { title: "", description: "", icon: "Code", displayOrder: 0, publi
 
 export function ServicesManager({ services }: { services: Service[] }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [pending, start] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY });
@@ -72,33 +74,41 @@ export function ServicesManager({ services }: { services: Service[] }) {
       <div className="lg:col-span-5">
         <div className="rounded-2xl border border-border-subtle bg-surface/40 p-6">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-faint">
-            {editingId ? "Edit service" : "Add service"}
+            {editingId ? t("admin.services.editService") : t("admin.services.addService")}
           </h2>
           {error ? <p className="mb-3 text-sm text-red-400" role="alert">{error}</p> : null}
           <div className="space-y-4">
-            <Field label="Title" required>
+            <Field label={t("admin.services.serviceTitle")} required>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </Field>
-            <Field label="Description">
+            <Field label={t("admin.services.descriptionLabel")}>
               <Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Icon name" hint="e.g. Code, Smartphone, Globe">
+              <Field label={t("admin.services.iconName")} hint={t("admin.services.iconHint")}>
                 <Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} />
               </Field>
-              <Field label="Display order">
+              <Field label={t("admin.services.displayOrder")}>
                 <Input type="number" value={String(form.displayOrder)} onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) || 0 })} />
               </Field>
             </div>
             <label className="flex cursor-pointer items-center gap-2 text-sm text-content">
               <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} className="h-4 w-4 accent-accent" />
-              Published
+              {t("admin.services.published")}
             </label>
             <div className="flex items-center gap-3">
               <Button onClick={submit} disabled={pending}>
-                {pending ? "Saving…" : editingId ? "Update service" : "Add service"}
+                {pending
+                  ? t("admin.services.saving")
+                  : editingId
+                    ? t("admin.services.update")
+                    : t("admin.services.add")}
               </Button>
-              {editingId ? <Button variant="ghost" onClick={reset}>Cancel</Button> : null}
+              {editingId ? (
+                <Button variant="ghost" onClick={reset}>
+                  {t("admin.common.cancel")}
+                </Button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -106,7 +116,7 @@ export function ServicesManager({ services }: { services: Service[] }) {
 
       <div className="lg:col-span-7">
         {services.length === 0 ? (
-          <p className="text-sm text-muted">No services yet.</p>
+          <p className="text-sm text-muted">{t("admin.services.noServices")}</p>
         ) : (
           <ul className="space-y-2">
             {services.map((s) => (
@@ -117,9 +127,15 @@ export function ServicesManager({ services }: { services: Service[] }) {
                   </span>
                   <div>
                     <p className="text-sm font-medium text-content">{s.title}</p>
-                    <p className="text-xs text-faint">order {s.displayOrder}</p>
+                    <p className="text-xs text-faint">
+                      {t("admin.services.order", { order: s.displayOrder })}
+                    </p>
                   </div>
-                  {s.published ? <Badge tone="success">Published</Badge> : <Badge>Hidden</Badge>}
+                  {s.published ? (
+                      <Badge tone="success">{t("status.published")}</Badge>
+                    ) : (
+                      <Badge>{t("status.hidden")}</Badge>
+                    )}
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -128,19 +144,19 @@ export function ServicesManager({ services }: { services: Service[] }) {
                     onClick={() => toggle(s)}
                     className="rounded-md px-2 py-1 text-xs text-muted hover:text-content"
                   >
-                    {s.published ? "Hide" : "Publish"}
+                    {s.published ? t("admin.services.hide") : t("admin.services.publish")}
                   </button>
-                  <button type="button" onClick={() => startEdit(s)} className="rounded-md p-1.5 text-muted hover:text-content" aria-label="Edit">
+                  <button type="button" onClick={() => startEdit(s)} className="rounded-md p-1.5 text-muted hover:text-content" aria-label={t("admin.services.edit")}>
                     <Icon name="Pencil" className="h-4 w-4" />
                   </button>
                   <ConfirmButton
-                    confirmLabel="Delete"
+                    confirmLabel={t("admin.services.delete")}
                     onConfirm={async () => {
                       const res = await deleteService(s.id);
                       if (!res.error) router.refresh();
                       return res;
                     }}
-                    successMessage="Deleted"
+                    successMessage={t("admin.services.deleted")}
                     className="text-red-400 hover:bg-red-500/10"
                   >
                     <Icon name="Trash2" className="h-4 w-4" />

@@ -12,7 +12,7 @@ export type ProfileResult = { ok?: boolean; error?: string; fieldErrors?: Record
 export async function updateProfile(input: ProfileInput): Promise<ProfileResult> {
   await requireAdmin();
   const parsed = profileSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   const data = parsed.data;
   const row = {
     name: data.name,
@@ -47,6 +47,6 @@ export async function updateProfile(input: ProfileInput): Promise<ProfileResult>
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update profile." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }

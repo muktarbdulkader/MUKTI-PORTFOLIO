@@ -7,21 +7,21 @@ const optionalUrl = z
   .string()
   .trim()
   .optional()
-  .refine((v) => !v || /^https?:\/\/.+/i.test(v), "Enter a valid URL (https://...)")
+  .refine((v) => !v || /^https?:\/\/.+/i.test(v), "validation.urlInvalid")
   .transform((v) => (v ? v : undefined));
 
 const optionalEmail = z
   .string()
   .trim()
   .optional()
-  .refine((v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "Enter a valid email")
+  .refine((v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "validation.emailInvalid")
   .transform((v) => (v ? v : undefined));
 
 // --- Auth ------------------------------------------------------------------
 
 export const loginSchema = z.object({
-  email: z.string().trim().email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  email: z.string().trim().email("validation.emailInvalid"),
+  password: z.string().min(8, "validation.passwordMin"),
 });
 export type LoginInput = z.infer<typeof loginSchema>;
 
@@ -30,13 +30,13 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export const inquiryTypes = ["JOB_OR_INTERNSHIP", "FREELANCE_PROJECT", "COLLABORATION", "OTHER"] as const;
 
 export const contactSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name").max(80),
-  email: z.string().trim().email("Enter a valid email").max(160),
+  name: z.string().trim().min(2, "validation.nameMin").max(80),
+  email: z.string().trim().email("validation.emailInvalid").max(160),
   inquiryType: z.enum(inquiryTypes),
-  subject: z.string().trim().min(2, "Add a subject").max(160),
-  message: z.string().trim().min(10, "Message is too short").max(5000),
+  subject: z.string().trim().min(2, "validation.subjectMin").max(160),
+  message: z.string().trim().min(10, "validation.messageMin").max(5000),
   /** honeypot — must remain empty */
-  company: z.string().max(0, "Spam detected").optional().or(z.literal("")),
+  company: z.string().max(0, "validation.spam").optional().or(z.literal("")),
 });
 export type ContactInput = z.infer<typeof contactSchema>;
 
@@ -45,7 +45,7 @@ export type ContactInput = z.infer<typeof contactSchema>;
 export const projectStatuses = ["DRAFT", "PUBLISHED", "UNPUBLISHED"] as const;
 
 export const projectSchema = z.object({
-  title: z.string().trim().min(1, "Title is required").max(120),
+  title: z.string().trim().min(1, "validation.titleRequired").max(120),
   slug: z
     .string()
     .trim()
@@ -79,8 +79,8 @@ export type ProjectInput = z.infer<typeof projectSchema>;
 // --- Skills ----------------------------------------------------------------
 
 export const skillSchema = z.object({
-  name: z.string().trim().min(1, "Name is required").max(80),
-  category: z.string().trim().min(1, "Category is required").max(80),
+  name: z.string().trim().min(1, "validation.nameRequired").max(80),
+  category: z.string().trim().min(1, "validation.categoryRequired").max(80),
   icon: z.string().trim().min(1).max(80).default("Code2"),
   displayOrder: z.number().int().min(0).max(9999).default(0),
   published: z.boolean().default(true),
@@ -101,7 +101,7 @@ export const experienceKinds = [
 
 export const experienceSchema = z.object({
   kind: z.enum(experienceKinds),
-  title: z.string().trim().min(1, "Title is required").max(160),
+  title: z.string().trim().min(1, "validation.titleRequired").max(160),
   organization: z.string().trim().max(160).optional().or(z.literal("")).transform((v) => v || undefined),
   description: z.string().trim().optional().transform((v) => v || undefined),
   startDate: z.string().optional().transform((v) => (v ? new Date(v) : undefined)),
@@ -115,7 +115,7 @@ export type ExperienceInput = z.infer<typeof experienceSchema>;
 // --- Services --------------------------------------------------------------
 
 export const serviceSchema = z.object({
-  title: z.string().trim().min(1, "Title is required").max(120),
+  title: z.string().trim().min(1, "validation.titleRequired").max(120),
   description: z.string().trim().optional().transform((v) => v || undefined),
   icon: z.string().trim().min(1).max(80).default("Code"),
   displayOrder: z.number().int().min(0).max(9999).default(0),

@@ -12,7 +12,13 @@ import {
 import { loginSchema } from "@/lib/validation/schemas";
 import { rateLimit, getClientIp, envInt } from "@/lib/rate-limit";
 
-export type LoginState = { ok?: boolean; error?: string; email?: string };
+export type LoginState = {
+  ok?: boolean;
+  error?: string;
+  email?: string;
+  /** Seconds to wait before retrying (rate limit). */
+  retryAfterSeconds?: number;
+};
 
 export async function loginAction(
   _prevState: LoginState | undefined,
@@ -27,7 +33,7 @@ export async function loginAction(
     60_000
   );
   if (!rl.ok) {
-    return { error: `Too many attempts. Try again in ${rl.retryAfterSeconds}s.` };
+    return { error: "errors.tooManyAttempts", retryAfterSeconds: rl.retryAfterSeconds };
   }
 
   const parsed = loginSchema.safeParse({
@@ -35,7 +41,7 @@ export async function loginAction(
     password: String(formData.get("password") ?? ""),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid credentials." };
+    return { error: parsed.error.issues[0]?.message ?? "errors.invalidCredentials" };
   }
 
   const admin = await prisma.admin.findUnique({
@@ -46,7 +52,7 @@ export async function loginAction(
     ? await verifyPassword(parsed.data.password, admin.passwordHash)
     : await verifyPassword(parsed.data.password, "$2b$12$abcdefghijklmnopqrstuv");
   if (!admin || !ok) {
-    return { error: "Invalid email or password." };
+    return { error: "errors.invalidCredentials" };
   }
 
   await setSessionCookie({

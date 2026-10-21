@@ -7,6 +7,8 @@ import { Input, Textarea } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmButton } from "@/components/ui/confirm-button";
+import { useI18n } from "@/lib/i18n/provider";
+import { LANGUAGES } from "@/lib/i18n/config";
 import { formatDate } from "@/lib/utils";
 import {
   markMessageRead,
@@ -28,15 +30,10 @@ interface Message {
   createdAt: Date;
 }
 
-const INQUIRY_LABEL: Record<string, string> = {
-  JOB_OR_INTERNSHIP: "Job / Internship",
-  FREELANCE_PROJECT: "Freelance",
-  COLLABORATION: "Collaboration",
-  OTHER: "Other",
-};
-
 export function MessagesClient({ messages }: { messages: Message[] }) {
   const router = useRouter();
+  const { t, dict, locale } = useI18n();
+  const inquiryLabels = dict.inquiry as Record<string, string>;
   const [pending, start] = useTransition();
   const [selectedId, setSelectedId] = useState<string | null>(messages[0]?.id ?? null);
   const [search, setSearch] = useState("");
@@ -78,7 +75,7 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search messages"
+              placeholder={t("admin.messages.search")}
               className="pl-9"
             />
           </div>
@@ -89,18 +86,24 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
               key={f}
               type="button"
               onClick={() => setFilter(f)}
-              className={`rounded-lg px-3 py-1.5 text-sm capitalize ${
+              className={`rounded-lg px-3 py-1.5 text-sm ${
                 filter === f ? "bg-accent/12 text-accent" : "text-muted hover:text-content"
               }`}
             >
-              {f}
+              {t(
+                f === "inbox"
+                  ? "admin.messages.inbox"
+                  : f === "unread"
+                    ? "admin.messages.unreadFilter"
+                    : "admin.messages.archivedFilter"
+              )}
             </button>
           ))}
         </div>
 
         {filtered.length === 0 ? (
           <p className="rounded-xl border border-border-subtle bg-surface/40 p-6 text-sm text-muted">
-            No messages.
+            {t("admin.messages.noMessages")}
           </p>
         ) : (
           <ul className="space-y-1.5">
@@ -117,13 +120,15 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-content">{m.name}</span>
-                    <span className="text-xs text-faint">{formatDate(m.createdAt)}</span>
+                    <span className="text-xs text-faint">
+                      {formatDate(m.createdAt, undefined, LANGUAGES[locale].tag)}
+                    </span>
                   </div>
                   <p className="mt-0.5 truncate text-sm text-content">{m.subject}</p>
                   <div className="mt-1 flex items-center gap-2">
-                    <Badge>{INQUIRY_LABEL[m.inquiryType] ?? m.inquiryType}</Badge>
-                    {m.isArchived ? <Badge tone="warning">Archived</Badge> : null}
-                    {!m.isRead ? <Badge tone="accent">New</Badge> : null}
+                    <Badge>{inquiryLabels[m.inquiryType] ?? m.inquiryType}</Badge>
+                    {m.isArchived ? <Badge tone="warning">{t("status.archived")}</Badge> : null}
+                    {!m.isRead ? <Badge tone="accent">{t("status.new")}</Badge> : null}
                   </div>
                 </button>
               </li>
@@ -157,7 +162,9 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
                   }
                   className="rounded-md px-2 py-1 text-xs text-muted hover:text-content"
                 >
-                  Mark {selected.isRead ? "unread" : "read"}
+                  {selected.isRead
+                    ? t("admin.messages.markUnread")
+                    : t("admin.messages.markRead")}
                 </button>
                 <button
                   type="button"
@@ -170,10 +177,12 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
                   }
                   className="rounded-md px-2 py-1 text-xs text-muted hover:text-content"
                 >
-                  {selected.isArchived ? "Unarchive" : "Archive"}
+                  {selected.isArchived
+                    ? t("admin.messages.unarchive")
+                    : t("admin.messages.archive")}
                 </button>
                 <ConfirmButton
-                  confirmLabel="Delete"
+                  confirmLabel={t("admin.messages.delete")}
                   onConfirm={async () => {
                     const res = await deleteMessage(selected.id);
                     if (!res.error) {
@@ -182,10 +191,10 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
                     }
                     return res;
                   }}
-                  successMessage="Deleted"
+                  successMessage={t("admin.messages.deleted")}
                   className="text-red-400 hover:bg-red-500/10"
                 >
-                  Delete
+                  {t("admin.messages.delete")}
                 </ConfirmButton>
               </div>
             </div>
@@ -198,17 +207,17 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
 
             <div className="mt-5">
               <label className="mb-1.5 block text-sm font-medium text-content">
-                Reply (saved internally)
+                {t("admin.messages.replyLabel")}
               </label>
               <Textarea
                 rows={4}
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
-                placeholder="Draft a reply to keep track of the conversation…"
+                placeholder={t("admin.messages.replyPlaceholder")}
               />
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-xs text-faint">
-                  To actually email the sender, use their address above.
+                  {t("admin.messages.replyHint")}
                 </span>
                 <Button
                   disabled={pending}
@@ -219,14 +228,14 @@ export function MessagesClient({ messages }: { messages: Message[] }) {
                     })
                   }
                 >
-                  Save reply
+                  {t("admin.messages.saveReply")}
                 </Button>
               </div>
             </div>
           </div>
         ) : (
           <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-border-subtle p-10 text-sm text-muted">
-            Select a message to read it.
+            {t("admin.messages.selectMessage")}
           </div>
         )}
       </div>

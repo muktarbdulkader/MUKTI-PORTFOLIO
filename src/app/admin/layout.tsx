@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
+import { getI18n } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Admin",
-    template: "%s — Mukti Admin",
-  },
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { dict } = await getI18n();
+  return {
+    title: {
+      default: dict.meta.admin,
+      template: "%s — " + dict.meta.admin,
+    },
+    robots: { index: false, follow: false },
+  };
+}
 
 /**
  * Root admin layout. Contains only `children` so that `/admin/login` does NOT

@@ -8,6 +8,7 @@ import {
   getPublishedProjectBySlug,
   getRelatedProjects,
 } from "@/lib/queries";
+import { getI18n } from "@/lib/i18n/server";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await getPublishedProjectBySlug(slug).catch(() => null);
   if (!project) {
-    return { title: "Project not found" };
+    const { dict } = await getI18n();
+    return { title: dict.meta.projectNotFound };
   }
   return {
     title: project.title,

@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { MessagesClient } from "@/components/admin/messages-client";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function AdminMessagesPage() {
+  const { t } = await getI18n();
   const messages = await prisma.contactMessage.findMany({
     orderBy: { createdAt: "desc" },
     select: {
@@ -24,8 +26,14 @@ export default async function AdminMessagesPage() {
   return (
     <AdminPage>
       <PageHeader
-        title="Messages"
-        description={unread > 0 ? `${unread} unread message${unread === 1 ? "" : "s"}` : "Your contact inbox."}
+        title={t("admin.messages.title")}
+        description={
+          unread > 0
+            ? t(unread === 1 ? "admin.messages.unread" : "admin.messages.unreadPlural", {
+                count: unread,
+              })
+            : t("admin.messages.description")
+        }
       />
       <div className="mt-8">
         <MessagesClient messages={messages} />

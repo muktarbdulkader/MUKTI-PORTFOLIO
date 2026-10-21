@@ -8,7 +8,13 @@ import { mapZodErrors, firstZodError } from "@/lib/validation/format";
 import { rateLimit, getClientIp, envInt } from "@/lib/rate-limit";
 import { sendContactNotification } from "@/lib/email";
 
-export type ContactState = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
+export type ContactState = {
+  ok?: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
+  /** Seconds to wait before retrying (rate limit). */
+  retryAfterSeconds?: number;
+};
 
 /** Public contact form submission. Not authenticated; rate-limited. */
 export async function submitContact(
@@ -22,7 +28,7 @@ export async function submitContact(
     60_000
   );
   if (!rl.ok) {
-    return { error: `Too many messages. Please try again in ${rl.retryAfterSeconds}s.` };
+    return { error: "errors.tooManyMessages", retryAfterSeconds: rl.retryAfterSeconds };
   }
 
   const parsed = contactSchema.safeParse({
@@ -70,7 +76,7 @@ export async function submitContact(
     void msg;
     return { ok: true };
   } catch {
-    return { error: "Something went wrong while sending your message. Please try again later." };
+    return { error: "errors.contactFailed" };
   }
 }
 
@@ -84,7 +90,7 @@ export async function markMessageRead(id: string, isRead: boolean): Promise<{ ok
     revalidatePath("/admin");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update message." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -96,7 +102,7 @@ export async function archiveMessage(id: string, isArchived: boolean): Promise<{
     revalidatePath("/admin");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update message." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -108,7 +114,7 @@ export async function deleteMessage(id: string): Promise<{ ok?: boolean; error?:
     revalidatePath("/admin");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete message." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }
 
@@ -124,6 +130,6 @@ export async function replyToMessage(input: { id: string; adminReply: string }):
     revalidatePath("/admin/messages");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to save reply." };
+    return { error: err instanceof Error ? err.message : "errors.failedSaveReply" };
   }
 }

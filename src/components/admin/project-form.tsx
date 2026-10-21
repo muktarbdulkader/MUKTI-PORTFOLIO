@@ -8,6 +8,7 @@ import { Icon } from "@/components/ui/icon";
 import { TagList } from "@/components/admin/tag-list";
 import { cn, slugify } from "@/lib/utils";
 import { createProject, updateProject } from "@/lib/actions/projects";
+import { useI18n } from "@/lib/i18n/provider";
 import type { ProjectInput } from "@/lib/validation/schemas";
 
 export interface ProjectFormInitial {
@@ -51,6 +52,7 @@ export function ProjectForm({
   mediaImages: MediaOption[];
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -123,7 +125,7 @@ export function ProjectForm({
     <div className="space-y-8">
       {saved ? (
         <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-400">
-          <Icon name="CheckCircle2" className="h-4 w-4" /> Project saved.
+          <Icon name="CheckCircle2" className="h-4 w-4" /> {t("admin.projects.saved")}
         </div>
       ) : null}
       {error ? (
@@ -132,12 +134,12 @@ export function ProjectForm({
         </div>
       ) : null}
 
-      <Section title="Basics">
+      <Section title={t("admin.projects.basics")}>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Title" htmlFor="title" required error={fieldErrors.title}>
+          <Field label={t("admin.projects.titleField")} htmlFor="title" required error={fieldErrors.title}>
             <Input id="title" value={form.title} onChange={(e) => update("title", e.target.value)} />
           </Field>
-          <Field label="Slug" htmlFor="slug" hint="Leave empty to generate from title" error={fieldErrors.slug}>
+          <Field label={t("admin.projects.slug")} htmlFor="slug" hint={t("admin.projects.slugHint")} error={fieldErrors.slug}>
             <Input
               id="slug"
               value={form.slug}
@@ -146,19 +148,19 @@ export function ProjectForm({
             />
           </Field>
         </div>
-        <Field label="Category" htmlFor="category" error={fieldErrors.category}>
+        <Field label={t("admin.projects.category")} htmlFor="category" error={fieldErrors.category}>
           <Input id="category" value={form.category ?? ""} onChange={(e) => update("category", e.target.value)} />
         </Field>
-        <Field label="Short description" htmlFor="short" error={fieldErrors.shortDescription}>
+        <Field label={t("admin.projects.shortDescription")} htmlFor="short" error={fieldErrors.shortDescription}>
           <Textarea
             id="short"
             rows={2}
             value={form.shortDescription ?? ""}
             onChange={(e) => update("shortDescription", e.target.value)}
-            placeholder="One-line summary shown on cards"
+            placeholder={t("admin.projects.shortDescriptionPlaceholder")}
           />
         </Field>
-        <Field label="Overview" htmlFor="description" error={fieldErrors.description}>
+        <Field label={t("admin.projects.overview")} htmlFor="description" error={fieldErrors.description}>
           <Textarea
             id="description"
             rows={5}
@@ -167,10 +169,10 @@ export function ProjectForm({
           />
         </Field>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="My role" htmlFor="role" error={fieldErrors.role}>
+          <Field label={t("admin.projects.role")} htmlFor="role" error={fieldErrors.role}>
             <Input id="role" value={form.role ?? ""} onChange={(e) => update("role", e.target.value)} />
           </Field>
-          <Field label="Display order" htmlFor="order" error={fieldErrors.displayOrder}>
+          <Field label={t("admin.projects.displayOrder")} htmlFor="order" error={fieldErrors.displayOrder}>
             <Input
               id="order"
               type="number"
@@ -181,47 +183,47 @@ export function ProjectForm({
         </div>
       </Section>
 
-      <Section title="Technologies & features">
-        <Field label="Technologies" error={fieldErrors.technologies}>
-          <TagList value={form.technologies} onChange={(v) => update("technologies", v)} placeholder="e.g. React, then Enter" />
+      <Section title={t("admin.projects.technologies")}>
+        <Field label={t("admin.projects.technologiesLabel")} error={fieldErrors.technologies}>
+          <TagList value={form.technologies} onChange={(v) => update("technologies", v)} placeholder={t("admin.projects.technologiesPlaceholder")} />
         </Field>
-        <Field label="Key features" error={fieldErrors.features}>
-          <TagList value={form.features} onChange={(v) => update("features", v)} placeholder="e.g. Auth, then Enter" />
+        <Field label={t("admin.projects.keyFeatures")} error={fieldErrors.features}>
+          <TagList value={form.features} onChange={(v) => update("features", v)} placeholder={t("admin.projects.keyFeaturesPlaceholder")} />
         </Field>
       </Section>
 
-      <Section title="Case study">
+      <Section title={t("admin.projects.caseStudy")}>
         <Grid2>
-          <Field label="Problem" error={fieldErrors.problem}><Textarea value={form.problem ?? ""} onChange={(e) => update("problem", e.target.value)} /></Field>
-          <Field label="Target users" error={fieldErrors.targetUsers}><Textarea value={form.targetUsers ?? ""} onChange={(e) => update("targetUsers", e.target.value)} /></Field>
-          <Field label="Goals" error={fieldErrors.goals}><Textarea value={form.goals ?? ""} onChange={(e) => update("goals", e.target.value)} /></Field>
-          <Field label="Architecture" error={fieldErrors.architecture}><Textarea value={form.architecture ?? ""} onChange={(e) => update("architecture", e.target.value)} /></Field>
-          <Field label="Challenges & solutions" error={fieldErrors.challenges}><Textarea value={form.challenges ?? ""} onChange={(e) => update("challenges", e.target.value)} /></Field>
-          <Field label="Testing & decisions" error={fieldErrors.testingNotes}><Textarea value={form.testingNotes ?? ""} onChange={(e) => update("testingNotes", e.target.value)} /></Field>
+          <Field label={t("admin.projects.problem")} error={fieldErrors.problem}><Textarea value={form.problem ?? ""} onChange={(e) => update("problem", e.target.value)} /></Field>
+          <Field label={t("admin.projects.targetUsers")} error={fieldErrors.targetUsers}><Textarea value={form.targetUsers ?? ""} onChange={(e) => update("targetUsers", e.target.value)} /></Field>
+          <Field label={t("admin.projects.goals")} error={fieldErrors.goals}><Textarea value={form.goals ?? ""} onChange={(e) => update("goals", e.target.value)} /></Field>
+          <Field label={t("admin.projects.architecture")} error={fieldErrors.architecture}><Textarea value={form.architecture ?? ""} onChange={(e) => update("architecture", e.target.value)} /></Field>
+          <Field label={t("admin.projects.challenges")} error={fieldErrors.challenges}><Textarea value={form.challenges ?? ""} onChange={(e) => update("challenges", e.target.value)} /></Field>
+          <Field label={t("admin.projects.testing")} error={fieldErrors.testingNotes}><Textarea value={form.testingNotes ?? ""} onChange={(e) => update("testingNotes", e.target.value)} /></Field>
         </Grid2>
-        <Field label="Future improvements" error={fieldErrors.futureImprovements}>
+        <Field label={t("admin.projects.futureImprovements")} error={fieldErrors.futureImprovements}>
           <Textarea value={form.futureImprovements ?? ""} onChange={(e) => update("futureImprovements", e.target.value)} />
         </Field>
       </Section>
 
-      <Section title="Links">
+      <Section title={t("admin.projects.links")}>
         <Grid2>
-          <Field label="GitHub URL" error={fieldErrors.githubUrl}>
+          <Field label={t("admin.projects.githubUrl")} error={fieldErrors.githubUrl}>
             <Input value={form.githubUrl ?? ""} onChange={(e) => update("githubUrl", e.target.value)} placeholder="https://github.com/..." />
           </Field>
-          <Field label="Live demo URL" error={fieldErrors.liveUrl}>
+          <Field label={t("admin.projects.liveUrl")} error={fieldErrors.liveUrl}>
             <Input value={form.liveUrl ?? ""} onChange={(e) => update("liveUrl", e.target.value)} placeholder="https://..." />
           </Field>
         </Grid2>
       </Section>
 
-      <Section title="Publishing">
+      <Section title={t("admin.projects.publishing")}>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Status" error={fieldErrors.status}>
+          <Field label={t("admin.projects.status")} error={fieldErrors.status}>
             <Select value={form.status} onChange={(e) => update("status", e.target.value as ProjectInput["status"])}>
-              <option value="DRAFT">Draft</option>
-              <option value="PUBLISHED">Published</option>
-              <option value="UNPUBLISHED">Unpublished</option>
+              <option value="DRAFT">{t("status.draft")}</option>
+              <option value="PUBLISHED">{t("status.published")}</option>
+              <option value="UNPUBLISHED">{t("status.unpublished")}</option>
             </Select>
           </Field>
           <div className="flex items-end">
@@ -232,19 +234,19 @@ export function ProjectForm({
                 onChange={(e) => update("isFeatured", e.target.checked)}
                 className="h-4 w-4 rounded border-border-subtle bg-elevated accent-accent"
               />
-              Featured project
+              {t("admin.projects.featuredProject")}
             </label>
           </div>
         </div>
       </Section>
 
-      <Section title="Media">
-        <Field label="Thumbnail image" hint="Upload images in the Media library first" error={fieldErrors.thumbnailMediaId}>
+      <Section title={t("admin.projects.media")}>
+        <Field label={t("admin.projects.thumbnail")} hint={t("admin.projects.thumbnailHint")} error={fieldErrors.thumbnailMediaId}>
           <Select
             value={form.thumbnailMediaId ?? ""}
             onChange={(e) => update("thumbnailMediaId", e.target.value || null)}
           >
-            <option value="">No thumbnail</option>
+            <option value="">{t("admin.projects.noThumbnail")}</option>
             {mediaImages.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.originalName ?? m.id}
@@ -252,9 +254,9 @@ export function ProjectForm({
             ))}
           </Select>
         </Field>
-        <Field label="Screenshots" error={fieldErrors.screenshotIds}>
+        <Field label={t("admin.projects.screenshots")} error={fieldErrors.screenshotIds}>
           {mediaImages.length === 0 ? (
-            <p className="text-sm text-faint">No images available. Upload some in the Media library.</p>
+            <p className="text-sm text-faint">{t("admin.projects.noImages")}</p>
           ) : (
             <ul className="grid gap-2 sm:grid-cols-2">
               {mediaImages.map((m) => {
@@ -289,10 +291,14 @@ export function ProjectForm({
 
       <div className="flex items-center justify-end gap-3 border-t border-border-subtle pt-6">
         <Button variant="ghost" onClick={() => router.push("/admin/projects")}>
-          Cancel
+          {t("admin.common.cancel")}
         </Button>
         <Button variant="primary" disabled={pending} onClick={submit}>
-          {pending ? "Saving…" : project ? "Save changes" : "Create project"}
+          {pending
+            ? t("admin.projects.saving")
+            : project
+              ? t("admin.projects.saveChanges")
+              : t("admin.projects.createProject")}
           <Icon name="Save" className="h-4 w-4" />
         </Button>
       </div>

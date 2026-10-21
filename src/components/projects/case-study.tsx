@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Card } from "@/components/ui/card";
 import { ProjectCard } from "./project-card";
+import { getI18n } from "@/lib/i18n/server";
 import type { ProjectWithDetails, ProjectWithThumbnail } from "@/lib/queries";
 
 function Section({
@@ -26,13 +27,14 @@ function Section({
   );
 }
 
-export function CaseStudy({
+export async function CaseStudy({
   project,
   related,
 }: {
   project: ProjectWithDetails;
   related: ProjectWithThumbnail[];
 }) {
+  const { t } = await getI18n();
   const screenshots = project.screenshots;
   return (
     <article>
@@ -42,7 +44,7 @@ export function CaseStudy({
           className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-content"
         >
           <Icon name="ArrowRight" className="h-4 w-4 rotate-180" />
-          Back to projects
+          {t("projects.backToProjects")}
         </Link>
 
         <div className="mt-6 max-w-3xl">
@@ -67,7 +69,7 @@ export function CaseStudy({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-content"
               >
-                <Icon name="Github" className="h-4 w-4" /> Source
+                <Icon name="Github" className="h-4 w-4" /> {t("projects.source")}
               </a>
             ) : null}
             {project.liveUrl ? (
@@ -77,7 +79,7 @@ export function CaseStudy({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-content"
               >
-                <Icon name="ExternalLink" className="h-4 w-4" /> Live demo
+                <Icon name="ExternalLink" className="h-4 w-4" /> {t("projects.liveDemo")}
               </a>
             ) : null}
           </div>
@@ -105,21 +107,21 @@ export function CaseStudy({
 
       <Container className="py-8">
         {project.description ? (
-          <Section title="Overview">
+          <Section title={t("projects.sections.overview")}>
             <p className="text-base leading-8 text-content">{project.description}</p>
           </Section>
         ) : null}
 
         {project.problem ? (
-          <Section title="Problem">{project.problem}</Section>
+          <Section title={t("projects.sections.problem")}>{project.problem}</Section>
         ) : null}
         {project.targetUsers ? (
-          <Section title="Target users">{project.targetUsers}</Section>
+          <Section title={t("projects.sections.targetUsers")}>{project.targetUsers}</Section>
         ) : null}
-        {project.goals ? <Section title="Goals">{project.goals}</Section> : null}
+        {project.goals ? <Section title={t("projects.sections.goals")}>{project.goals}</Section> : null}
 
         {project.technologies?.length ? (
-          <Section title="Tech stack">
+          <Section title={t("projects.sections.techStack")}>
             <ul className="flex flex-wrap gap-2">
               {project.technologies.map((t) => (
                 <li
@@ -134,11 +136,11 @@ export function CaseStudy({
         ) : null}
 
         {project.architecture ? (
-          <Section title="Architecture">{project.architecture}</Section>
+          <Section title={t("projects.sections.architecture")}>{project.architecture}</Section>
         ) : null}
 
         {project.features?.length ? (
-          <Section title="Key features">
+          <Section title={t("projects.sections.keyFeatures")}>
             <ul className="space-y-2">
               {project.features.map((f, i) => (
                 <li key={i} className="flex items-start gap-2">
@@ -151,13 +153,13 @@ export function CaseStudy({
         ) : null}
 
         {project.challenges ? (
-          <Section title="Challenges & solutions">{project.challenges}</Section>
+          <Section title={t("projects.sections.challenges")}>{project.challenges}</Section>
         ) : null}
         {project.testingNotes ? (
-          <Section title="Testing & decisions">{project.testingNotes}</Section>
+          <Section title={t("projects.sections.testing")}>{project.testingNotes}</Section>
         ) : null}
         {project.futureImprovements ? (
-          <Section title="Future improvements">{project.futureImprovements}</Section>
+          <Section title={t("projects.sections.future")}>{project.futureImprovements}</Section>
         ) : null}
       </Container>
 
@@ -166,12 +168,12 @@ export function CaseStudy({
           <div className="flex flex-wrap gap-3">
             {project.githubUrl ? (
               <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants("secondary", "md")}>
-                <Icon name="Github" className="h-4 w-4" /> View source
+                <Icon name="Github" className="h-4 w-4" /> {t("projects.viewSource")}
               </a>
             ) : null}
             {project.liveUrl ? (
               <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonVariants("primary", "md")}>
-                <Icon name="ExternalLink" className="h-4 w-4" /> Visit live demo
+                <Icon name="ExternalLink" className="h-4 w-4" /> {t("projects.visitLiveDemo")}
               </a>
             ) : null}
           </div>
@@ -180,7 +182,7 @@ export function CaseStudy({
 
       {related.length > 0 ? (
         <Container size="wide" className="py-16">
-          <h2 className="text-xl font-semibold text-content">Related projects</h2>
+          <h2 className="text-xl font-semibold text-content">{t("projects.related")}</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (
               <ProjectCard key={p.id} project={p} />

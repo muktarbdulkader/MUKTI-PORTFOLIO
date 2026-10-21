@@ -12,7 +12,7 @@ export type SettingsResult = { ok?: boolean; error?: string; fieldErrors?: Recor
 export async function updateSettings(input: SettingsInput): Promise<SettingsResult> {
   await requireAdmin();
   const parsed = settingsSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   const data = parsed.data;
   const row = {
     siteTitle: data.siteTitle,
@@ -36,6 +36,6 @@ export async function updateSettings(input: SettingsInput): Promise<SettingsResu
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update settings." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }

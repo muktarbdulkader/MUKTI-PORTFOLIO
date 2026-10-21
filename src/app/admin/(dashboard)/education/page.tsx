@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { ExperienceManager } from "@/components/admin/experience-manager";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function AdminEducationPage() {
+  const { t } = await getI18n();
   const items = await prisma.experience.findMany({
     where: { kind: "EDUCATION" },
     orderBy: [{ displayOrder: "asc" }, { startDate: "desc" }],
@@ -11,8 +13,8 @@ export default async function AdminEducationPage() {
   return (
     <AdminPage>
       <PageHeader
-        title="Education"
-        description="Schools, courses, and academic background."
+        title={t("admin.experience.educationTitle")}
+        description={t("admin.experience.educationDescription")}
       />
       <div className="mt-8">
         <ExperienceManager items={items} kinds={["EDUCATION"]} defaultKind="EDUCATION" />

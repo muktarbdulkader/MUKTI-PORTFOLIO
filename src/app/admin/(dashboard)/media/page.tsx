@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { MediaManager } from "@/components/admin/media-manager";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function AdminMediaPage() {
+  const { t } = await getI18n();
   const media = await prisma.media.findMany({
     orderBy: { createdAt: "desc" },
     select: {
@@ -20,8 +22,8 @@ export default async function AdminMediaPage() {
   return (
     <AdminPage>
       <PageHeader
-        title="Media"
-        description="Upload and manage images and files. Public images are served from /uploads."
+        title={t("admin.media.title")}
+        description={t("admin.media.description")}
       />
       <div className="mt-8">
         <MediaManager media={media} />

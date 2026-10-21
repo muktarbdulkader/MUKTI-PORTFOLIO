@@ -11,26 +11,26 @@ export type ServiceResult = { ok?: boolean; error?: string; fieldErrors?: Record
 export async function createService(input: ServiceInput): Promise<ServiceResult> {
   await requireAdmin();
   const parsed = serviceSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
     await prisma.service.create({ data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to create service." };
+    return { error: err instanceof Error ? err.message : "errors.failedCreate" };
   }
 }
 
 export async function updateService(id: string, input: ServiceInput): Promise<ServiceResult> {
   await requireAdmin();
   const parsed = serviceSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
     await prisma.service.update({ where: { id }, data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update service." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -41,6 +41,6 @@ export async function deleteService(id: string): Promise<{ ok?: boolean; error?:
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete service." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }

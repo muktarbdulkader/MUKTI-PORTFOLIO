@@ -4,26 +4,31 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Icon } from "@/components/ui/icon";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { useI18n } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 import { logoutAction } from "@/lib/actions/auth";
 
 const NAV = [
-  { label: "Overview", href: "/admin", icon: "LayoutDashboard" },
-  { label: "Projects", href: "/admin/projects", icon: "FolderKanban" },
-  { label: "Skills", href: "/admin/skills", icon: "Wrench" },
-  { label: "Profile", href: "/admin/profile", icon: "User" },
-  { label: "Experience", href: "/admin/experience", icon: "Briefcase" },
-  { label: "Education", href: "/admin/education", icon: "GraduationCap" },
-  { label: "Services", href: "/admin/services", icon: "Code" },
-  { label: "Messages", href: "/admin/messages", icon: "MessageSquare" },
-  { label: "Media", href: "/admin/media", icon: "Image" },
-  { label: "Settings", href: "/admin/settings", icon: "Settings" },
-];
+  { key: "overview", href: "/admin", icon: "LayoutDashboard" },
+  { key: "projects", href: "/admin/projects", icon: "FolderKanban" },
+  { key: "skills", href: "/admin/skills", icon: "Wrench" },
+  { key: "profile", href: "/admin/profile", icon: "User" },
+  { key: "experience", href: "/admin/experience", icon: "Briefcase" },
+  { key: "education", href: "/admin/education", icon: "GraduationCap" },
+  { key: "services", href: "/admin/services", icon: "Code" },
+  { key: "messages", href: "/admin/messages", icon: "MessageSquare" },
+  { key: "media", href: "/admin/media", icon: "Image" },
+  { key: "settings", href: "/admin/settings", icon: "Settings" },
+] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
+
+  const navItems = NAV.map((item) => ({ ...item, label: t(`admin.nav.${item.key}`) }));
 
   const isActive = (href: string) =>
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
@@ -34,10 +39,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent">
           <Icon name="Sparkles" className="h-4 w-4" />
         </span>
-        Mukti CMS
+        {t("admin.shell.brand")}
       </div>
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2" aria-label="Admin">
-        {NAV.map((item) => (
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2" aria-label={t("admin.shell.navLabel")}>
+        {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
@@ -60,8 +65,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted hover:bg-elevated hover:text-content"
         >
           <Icon name="ExternalLink" className="h-4 w-4" />
-          View live site
+          {t("admin.shell.viewLiveSite")}
         </Link>
+        <div className="flex items-center justify-between gap-2 px-1">
+          <LanguageSwitcher variant="compact" align="start" />
+        </div>
         <button
           type="button"
           disabled={pending}
@@ -69,7 +77,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted hover:bg-elevated hover:text-content"
         >
           <Icon name="LogOut" className="h-4 w-4" />
-          {pending ? "Signing out…" : "Sign out"}
+          {pending ? t("admin.shell.signingOut") : t("admin.shell.signOut")}
         </button>
       </div>
     </aside>
@@ -98,12 +106,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             type="button"
             onClick={() => setOpen(true)}
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-muted hover:text-content"
-            aria-label="Open menu"
+            aria-label={t("admin.shell.openMenu")}
           >
             <Icon name="Menu" className="h-5 w-5" />
           </button>
-          <span className="text-sm font-semibold text-content">Dashboard</span>
-          <Link href="/" target="_blank" className="text-muted hover:text-content" aria-label="View site">
+          <span className="text-sm font-semibold text-content">
+            {t("admin.shell.dashboard")}
+          </span>
+          <Link href="/" target="_blank" className="text-muted hover:text-content" aria-label={t("admin.shell.viewSite")}>
             <Icon name="ExternalLink" className="h-5 w-5" />
           </Link>
         </header>

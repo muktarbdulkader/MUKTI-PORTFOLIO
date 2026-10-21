@@ -7,23 +7,27 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ProjectCard } from "@/components/projects/project-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { getI18n } from "@/lib/i18n/server";
 import { getPublishedProjects } from "@/lib/queries";
 
-export const metadata: Metadata = {
-  title: "Projects",
-  description:
-    "Browse published software projects by Mukti, including web and mobile applications with case studies.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { dict } = await getI18n();
+  return {
+    title: dict.meta.projects,
+    description: dict.meta.projectsDescription,
+  };
+}
 
 async function ProjectsList() {
+  const { t } = await getI18n();
   const projects = await getPublishedProjects();
   if (projects.length === 0) {
     return (
       <div className="mt-12">
         <EmptyState
           icon="FolderKanban"
-          title="No published projects yet"
-          description="Projects will appear here once they are published from the admin dashboard."
+          title={t("projects.emptyTitle")}
+          description={t("projects.emptyDescription")}
         />
       </div>
     );
@@ -47,7 +51,9 @@ function ListFallback() {
   );
 }
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const { t } = await getI18n();
+
   return (
     <Container size="wide" className="py-16">
       <div className="flex flex-col gap-4">
@@ -56,15 +62,12 @@ export default function ProjectsPage() {
           className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-content"
         >
           <Icon name="ArrowRight" className="h-4 w-4 rotate-180" />
-          Back home
+          {t("projects.backHome")}
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight text-content sm:text-4xl">
-          Projects
+          {t("projects.listTitle")}
         </h1>
-        <p className="max-w-2xl text-muted">
-          A selection of web and mobile applications I&apos;ve built. Each one links to a
-          detailed case study.
-        </p>
+        <p className="max-w-2xl text-muted">{t("projects.listDescription")}</p>
       </div>
       <Suspense fallback={<ListFallback />}>
         <ProjectsList />

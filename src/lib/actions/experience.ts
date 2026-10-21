@@ -11,26 +11,26 @@ export type ExperienceResult = { ok?: boolean; error?: string; fieldErrors?: Rec
 export async function createExperience(input: ExperienceInput): Promise<ExperienceResult> {
   await requireAdmin();
   const parsed = experienceSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
     await prisma.experience.create({ data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to create record." };
+    return { error: err instanceof Error ? err.message : "errors.failedCreate" };
   }
 }
 
 export async function updateExperience(id: string, input: ExperienceInput): Promise<ExperienceResult> {
   await requireAdmin();
   const parsed = experienceSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
     await prisma.experience.update({ where: { id }, data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update record." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -41,6 +41,6 @@ export async function deleteExperience(id: string): Promise<{ ok?: boolean; erro
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete record." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }

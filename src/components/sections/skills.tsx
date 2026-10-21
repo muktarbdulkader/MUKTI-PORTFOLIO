@@ -1,23 +1,27 @@
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Icon } from "@/components/ui/icon";
-import { FadeUp, StaggerContainer, StaggerItem } from "@/components/ui/motion";
+import { FadeUp, Marquee, Spotlight, StaggerContainer, StaggerItem } from "@/components/ui/motion";
+import { getI18n } from "@/lib/i18n/server";
 import type { Skill } from "@/lib/queries";
 
-const CATEGORY_COLORS: Record<string, { border: string; glow: string; icon: string }> = {
-  Frontend:    { border: "border-blue/20",   glow: "rgba(85,184,255,0.08)",    icon: "text-blue" },
-  Backend:     { border: "border-accent/20", glow: "rgba(139,92,246,0.08)",   icon: "text-accent" },
-  Mobile:      { border: "border-violet/20", glow: "rgba(167,139,250,0.08)",  icon: "text-violet" },
-  Database:    { border: "border-emerald/20",glow: "rgba(16,185,129,0.08)",   icon: "text-emerald" },
-  DevOps:      { border: "border-accent/15", glow: "rgba(139,92,246,0.06)",   icon: "text-accent" },
-  Tools:       { border: "border-blue/15",   glow: "rgba(85,184,255,0.06)",   icon: "text-blue" },
+const CATEGORY_COLORS: Record<string, { border: string; icon: string; hoverShadow: string }> = {
+  Frontend:    { border: "border-blue/20",   icon: "text-blue",    hoverShadow: "hover:shadow-[0_8px_40px_rgb(var(--accent-2-rgb)/0.08)]" },
+  Backend:     { border: "border-accent/20", icon: "text-accent",  hoverShadow: "hover:shadow-[0_8px_40px_rgb(var(--accent-rgb)/0.08)]" },
+  Mobile:      { border: "border-violet/20", icon: "text-violet",  hoverShadow: "hover:shadow-[0_8px_40px_rgba(167,139,250,0.08)]" },
+  Database:    { border: "border-emerald/20",icon: "text-emerald", hoverShadow: "hover:shadow-[0_8px_40px_rgba(16,185,129,0.08)]" },
+  DevOps:      { border: "border-accent/15", icon: "text-accent",  hoverShadow: "hover:shadow-[0_8px_40px_rgb(var(--accent-rgb)/0.06)]" },
+  Tools:       { border: "border-blue/15",   icon: "text-blue",    hoverShadow: "hover:shadow-[0_8px_40px_rgb(var(--accent-2-rgb)/0.06)]" },
 };
 
 function getCategoryStyle(cat: string) {
-  return CATEGORY_COLORS[cat] ?? { border: "border-border", glow: "rgba(139,92,246,0.05)", icon: "text-accent" };
+  return CATEGORY_COLORS[cat] ?? { border: "border-border", icon: "text-accent", hoverShadow: "hover:shadow-[0_8px_40px_rgb(var(--accent-rgb)/0.05)]" };
 }
 
-export function Skills({ skills }: { skills: Skill[] }) {
+export async function Skills({ skills }: { skills: Skill[] }) {
+  const { t, dict } = await getI18n();
+  const categoryLabels = dict.skills.categories as Record<string, string>;
+
   const byCategory = new Map<string, Skill[]>();
   for (const s of skills) {
     const list = byCategory.get(s.category) ?? [];
@@ -35,21 +39,21 @@ export function Skills({ skills }: { skills: Skill[] }) {
       {/* Background glow */}
       <div
         className="pointer-events-none absolute left-1/2 top-0 h-72 w-[600px] -translate-x-1/2 rounded-full opacity-20 blur-[80px]"
-        style={{ background: "linear-gradient(90deg, rgba(139,92,246,1), rgba(85,184,255,1))" }}
+        style={{ background: "linear-gradient(90deg, rgb(var(--accent-rgb)/1), rgb(var(--accent-2-rgb)/1))" }}
         aria-hidden="true"
       />
 
       <Container className="relative py-24">
         <FadeUp>
           <span className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">
-            Skills & Technologies
+            {t("skills.eyebrow")}
           </span>
           <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-content sm:text-4xl">
-            Tools I{" "}
-            <span className="text-gradient">work with</span>
+            {t("skills.titleLead")}{" "}
+            <span className="text-gradient">{t("skills.titleAccent")}</span>
           </h2>
           <p className="mt-4 max-w-lg text-base leading-7 text-muted">
-            A focused toolkit across the stack — from beautiful interfaces to scalable backends.
+            {t("skills.description")}
           </p>
         </FadeUp>
 
@@ -57,47 +61,69 @@ export function Skills({ skills }: { skills: Skill[] }) {
           <div className="mt-12">
             <EmptyState
               icon="Wrench"
-              title="Skills coming soon"
-              description="Skills are managed from the admin dashboard and appear here once published."
+              title={t("skills.emptyTitle")}
+              description={t("skills.emptyDescription")}
             />
           </div>
         ) : (
-          <StaggerContainer className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" delay={0.1}>
-            {groups.map(([category, items]) => {
-              const style = getCategoryStyle(category);
-              return (
-                <StaggerItem key={category}>
-                  <div
-                    className={`h-full rounded-2xl border ${style.border} bg-surface/50 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg`}
-                    style={{
-                      boxShadow: `0 0 0 0 transparent`,
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 8px 40px ${style.glow}`;
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget as HTMLDivElement).style.boxShadow = `0 0 0 0 transparent`;
-                    }}
-                  >
-                    <h3 className="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-faint">
-                      {category}
-                    </h3>
-                    <ul className="flex flex-wrap gap-2">
-                      {items.map((s) => (
-                        <li
-                          key={s.id}
-                          className={`inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm text-content transition-colors hover:border-accent/30 hover:text-accent`}
-                        >
-                          <Icon name={s.icon} className={`h-3.5 w-3.5 ${style.icon}`} />
-                          {s.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
+          <>
+            {/* Infinite technology marquee */}
+            <FadeUp delay={0.1}>
+              <div className="mt-10">
+                <Marquee>
+                  {groups.flatMap(([, items]) => items).map((s) => (
+                    <span
+                      key={s.id}
+                      className="mx-2 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/60 px-4 py-2 text-sm font-medium text-muted backdrop-blur-sm transition-colors duration-200 hover:border-accent/40 hover:text-content"
+                    >
+                      <Icon name={s.icon} className="h-4 w-4 text-accent" />
+                      {s.name}
+                    </span>
+                  ))}
+                </Marquee>
+              </div>
+            </FadeUp>
+
+            <StaggerContainer className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" delay={0.1}>
+              {groups.map(([category, items]) => {
+                const style = getCategoryStyle(category);
+                return (
+                  <StaggerItem key={category}>
+                    <Spotlight className="h-full">
+                      <div
+                        className={`card-lift h-full rounded-2xl border ${style.border} ${style.hoverShadow} bg-surface/50 p-6 backdrop-blur-sm`}
+                      >
+                        <div className="mb-5 flex items-center gap-2">
+                          <span
+                            className={`flex h-7 w-7 items-center justify-center rounded-lg bg-current/10 ${style.icon}`}
+                          >
+                            <Icon name="Code2" className="h-3.5 w-3.5" />
+                          </span>
+                          <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-faint">
+                            {categoryLabels[category] ?? category}
+                          </h3>
+                          <span className="ml-auto rounded-md bg-elevated px-2 py-0.5 text-[11px] font-semibold text-faint">
+                            {items.length}
+                          </span>
+                        </div>
+                        <ul className="flex flex-wrap gap-2">
+                          {items.map((s) => (
+                            <li
+                              key={s.id}
+                              className={`inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent`}
+                            >
+                              <Icon name={s.icon} className={`h-3.5 w-3.5 ${style.icon}`} />
+                              {s.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </Spotlight>
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
+          </>
         )}
       </Container>
     </section>

@@ -2,12 +2,14 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { ProjectForm, type ProjectFormInitial } from "@/components/admin/project-form";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function EditProjectPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const { t } = await getI18n();
   const { id } = await params;
   const project = await prisma.project.findUnique({
     where: { id },
@@ -53,7 +55,7 @@ export default async function EditProjectPage({
   return (
     <AdminPage>
       <PageHeader
-        title="Edit project"
+        title={t("admin.projects.editProject")}
         description={project.title}
       />
       <div className="mt-8 max-w-3xl">

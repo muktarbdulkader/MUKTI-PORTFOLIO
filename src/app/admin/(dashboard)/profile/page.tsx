@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { ProfileForm } from "@/components/admin/profile-form";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function AdminProfilePage() {
+  const { t } = await getI18n();
   const profile =
     (await prisma.profile.findFirst()) ??
     null;
@@ -45,8 +47,8 @@ export default async function AdminProfilePage() {
   return (
     <AdminPage>
       <PageHeader
-        title="Profile"
-        description="Your identity, hero, about section, and CV."
+        title={t("admin.profile.title")}
+        description={t("admin.profile.description")}
       />
       <div className="mt-8">
         <ProfileForm profile={initial} mediaImages={mediaImages} mediaDocs={mediaDocs} />

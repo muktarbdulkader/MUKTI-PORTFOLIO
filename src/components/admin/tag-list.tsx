@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
+import { useI18n } from "@/lib/i18n/provider";
 
 export function TagList({
   value,
   onChange,
-  placeholder = "Add and press Enter",
+  placeholder,
   id,
 }: {
   value: string[];
@@ -15,6 +16,7 @@ export function TagList({
   placeholder?: string;
   id?: string;
 }) {
+  const { t } = useI18n();
   const [draft, setDraft] = useState("");
 
   const add = () => {
@@ -33,7 +35,7 @@ export function TagList({
       <Input
         id={id}
         value={draft}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("admin.common.tagPlaceholder")}
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === ",") {
@@ -54,7 +56,7 @@ export function TagList({
                 type="button"
                 onClick={() => onChange(value.filter((t) => t !== tag))}
                 className="text-faint hover:text-red-400"
-                aria-label={`Remove ${tag}`}
+                aria-label={t("admin.common.removeTag", { tag })}
               >
                 <Icon name="X" className="h-3.5 w-3.5" />
               </button>

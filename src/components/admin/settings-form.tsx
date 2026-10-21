@@ -6,6 +6,7 @@ import { Field, Input, Textarea, Select } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { updateSettings } from "@/lib/actions/settings";
+import { useI18n } from "@/lib/i18n/provider";
 import type { SettingsInput } from "@/lib/validation/schemas";
 
 interface SettingsInitial {
@@ -32,6 +33,7 @@ export function SettingsForm({
   mediaImages: MediaOption[];
 }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -68,7 +70,7 @@ export function SettingsForm({
     <div className="max-w-3xl space-y-8">
       {saved ? (
         <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-400">
-          <Icon name="CheckCircle2" className="h-4 w-4" /> Settings saved.
+          <Icon name="CheckCircle2" className="h-4 w-4" /> {t("admin.settings.saved")}
         </div>
       ) : null}
       {error ? (
@@ -78,28 +80,28 @@ export function SettingsForm({
       ) : null}
 
       <section className="space-y-4 rounded-2xl border border-border-subtle bg-surface/40 p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">Site</h2>
-        <Field label="Site title"><Input value={form.siteTitle} onChange={(e) => update("siteTitle", e.target.value)} /></Field>
-        <Field label="Meta description" hint="Used for SEO and social sharing"><Textarea rows={3} value={form.metaDescription ?? ""} onChange={(e) => update("metaDescription", e.target.value)} /></Field>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">{t("admin.settings.site")}</h2>
+        <Field label={t("admin.settings.siteTitle")}><Input value={form.siteTitle} onChange={(e) => update("siteTitle", e.target.value)} /></Field>
+        <Field label={t("admin.settings.metaDescription")} hint={t("admin.settings.metaHint")}><Textarea rows={3} value={form.metaDescription ?? ""} onChange={(e) => update("metaDescription", e.target.value)} /></Field>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Favicon path"><Input value={form.favicon ?? ""} onChange={(e) => update("favicon", e.target.value)} placeholder="/favicon.ico" /></Field>
-          <Field label="Contact email"><Input type="email" value={form.contactEmail ?? ""} onChange={(e) => update("contactEmail", e.target.value)} /></Field>
+          <Field label={t("admin.settings.faviconPath")}><Input value={form.favicon ?? ""} onChange={(e) => update("favicon", e.target.value)} placeholder="/favicon.ico" /></Field>
+          <Field label={t("admin.settings.contactEmail")}><Input type="email" value={form.contactEmail ?? ""} onChange={(e) => update("contactEmail", e.target.value)} /></Field>
         </div>
-        <Field label="Footer content"><Textarea rows={2} value={form.footerContent ?? ""} onChange={(e) => update("footerContent", e.target.value)} /></Field>
+        <Field label={t("admin.settings.footerContent")}><Textarea rows={2} value={form.footerContent ?? ""} onChange={(e) => update("footerContent", e.target.value)} /></Field>
       </section>
 
       <section className="space-y-4 rounded-2xl border border-border-subtle bg-surface/40 p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">Appearance & sharing</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">{t("admin.settings.appearance")}</h2>
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Theme accent" hint="blue or violet">
+          <Field label={t("admin.settings.themeAccent")} hint={t("admin.settings.themeAccentHint")}>
             <Select value={form.themeAccent} onChange={(e) => update("themeAccent", e.target.value)}>
-              <option value="blue">Blue</option>
-              <option value="violet">Violet</option>
+              <option value="blue">{t("admin.settings.blue")}</option>
+              <option value="violet">{t("admin.settings.violet")}</option>
             </Select>
           </Field>
-          <Field label="Social sharing image" hint="Upload in Media first">
+          <Field label={t("admin.settings.socialImage")} hint={t("admin.settings.socialImageHint")}>
             <Select value={form.socialImageId ?? ""} onChange={(e) => update("socialImageId", e.target.value || null)}>
-              <option value="">None</option>
+              <option value="">{t("admin.settings.none")}</option>
               {mediaImages.map((m) => (
                 <option key={m.id} value={m.id}>{m.originalName ?? m.id}</option>
               ))}
@@ -108,13 +110,13 @@ export function SettingsForm({
         </div>
         <label className="flex cursor-pointer items-center gap-2 text-sm text-content">
           <input type="checkbox" checked={form.cvVisible} onChange={(e) => update("cvVisible", e.target.checked)} className="h-4 w-4 accent-accent" />
-          Allow public CV download (when a CV file is set in Profile)
+          {t("admin.settings.allowCv")}
         </label>
       </section>
 
       <div className="flex items-center justify-end gap-3 border-t border-border-subtle pt-6">
         <Button onClick={submit} disabled={pending}>
-          {pending ? "Saving…" : "Save settings"}
+          {pending ? t("admin.settings.saving") : t("admin.settings.saveSettings")}
           <Icon name="Save" className="h-4 w-4" />
         </Button>
       </div>

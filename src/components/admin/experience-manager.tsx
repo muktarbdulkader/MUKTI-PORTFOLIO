@@ -6,6 +6,7 @@ import { Field, Input, Textarea, Select } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ConfirmButton } from "@/components/ui/confirm-button";
+import { useI18n } from "@/lib/i18n/provider";
 import { Badge } from "@/components/ui/badge";
 import {
   createExperience,
@@ -26,16 +27,6 @@ interface ExperienceItem {
   published: boolean;
 }
 
-const KIND_LABEL: Record<string, string> = {
-  EDUCATION: "Education",
-  INTERNSHIP: "Internship",
-  EMPLOYMENT: "Employment",
-  CERTIFICATION: "Certification",
-  TRAINING: "Training",
-  ACADEMIC_PROJECT: "Academic project",
-  ACHIEVEMENT: "Achievement",
-};
-
 function toInputDate(d: Date | null | undefined): string {
   if (!d) return "";
   const dt = new Date(d);
@@ -53,6 +44,8 @@ export function ExperienceManager({
   defaultKind: string;
 }) {
   const router = useRouter();
+  const { t, dict } = useI18n();
+  const kindLabels = dict.experience.kinds as Record<string, string>;
   const [pending, start] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -128,46 +121,50 @@ export function ExperienceManager({
       <div className="lg:col-span-5">
         <div className="rounded-2xl border border-border-subtle bg-surface/40 p-6">
           <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-faint">
-            {editingId ? "Edit record" : "Add record"}
+            {editingId ? t("admin.experience.editRecord") : t("admin.experience.addRecord")}
           </h2>
           {error ? <p className="mb-3 text-sm text-red-400" role="alert">{error}</p> : null}
           <div className="space-y-4">
-            <Field label="Type" required>
+            <Field label={t("admin.experience.type")} required>
               <Select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value })}>
                 {kinds.map((k) => (
-                  <option key={k} value={k}>{KIND_LABEL[k] ?? k}</option>
+                  <option key={k} value={k}>{kindLabels[k] ?? k}</option>
                 ))}
               </Select>
             </Field>
-            <Field label="Title" required>
+            <Field label={t("admin.experience.recordTitle")} required>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             </Field>
-            <Field label="Organization / Institution">
+            <Field label={t("admin.experience.organization")}>
               <Input value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} />
             </Field>
-            <Field label="Description">
+            <Field label={t("admin.experience.descriptionLabel")}>
               <Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Start date"><Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></Field>
-              <Field label="End date"><Input type="date" value={form.endDate} disabled={form.current} onChange={(e) => setForm({ ...form, endDate: e.target.value })} /></Field>
+              <Field label={t("admin.experience.startDate")}><Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></Field>
+              <Field label={t("admin.experience.endDate")}><Input type="date" value={form.endDate} disabled={form.current} onChange={(e) => setForm({ ...form, endDate: e.target.value })} /></Field>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Display order"><Input type="number" value={String(form.displayOrder)} onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) || 0 })} /></Field>
+              <Field label={t("admin.experience.displayOrder")}><Input type="number" value={String(form.displayOrder)} onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) || 0 })} /></Field>
               <label className="flex cursor-pointer items-center gap-2 pt-6 text-sm text-content">
                 <input type="checkbox" checked={form.current} onChange={(e) => setForm({ ...form, current: e.target.checked })} className="h-4 w-4 accent-accent" />
-                Current
+                {t("admin.experience.current")}
               </label>
             </div>
             <label className="flex cursor-pointer items-center gap-2 text-sm text-content">
               <input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} className="h-4 w-4 accent-accent" />
-              Published
+              {t("admin.experience.published")}
             </label>
             <div className="flex items-center gap-3">
               <Button onClick={submit} disabled={pending}>
-                {pending ? "Saving…" : editingId ? "Update record" : "Add record"}
+                {pending
+                  ? t("admin.experience.saving")
+                  : editingId
+                    ? t("admin.experience.update")
+                    : t("admin.experience.add")}
               </Button>
-              {editingId ? <Button variant="ghost" onClick={reset}>Cancel</Button> : null}
+              {editingId ? <Button variant="ghost" onClick={reset}>{t("admin.common.cancel")}</Button> : null}
             </div>
           </div>
         </div>
@@ -175,7 +172,7 @@ export function ExperienceManager({
 
       <div className="lg:col-span-7">
         {items.length === 0 ? (
-          <p className="text-sm text-muted">No records yet.</p>
+          <p className="text-sm text-muted">{t("admin.experience.noRecords")}</p>
         ) : (
           <ul className="space-y-2">
             {items.map((it) => (
@@ -183,25 +180,29 @@ export function ExperienceManager({
                 <div>
                   <p className="text-sm font-medium text-content">{it.title}</p>
                   <p className="text-xs text-faint">
-                    {KIND_LABEL[it.kind] ?? it.kind}
+                    {kindLabels[it.kind] ?? it.kind}
                     {it.organization ? ` · ${it.organization}` : ""}
                     {it.startDate ? ` · ${toInputDate(it.startDate)}` : ""}
-                    {it.current ? " — Present" : it.endDate ? ` — ${toInputDate(it.endDate)}` : ""}
+                    {it.current
+                      ? ` — ${t("admin.experience.present")}`
+                      : it.endDate
+                        ? ` — ${toInputDate(it.endDate)}`
+                        : ""}
                   </p>
                   {it.published ? <Badge tone="success">Published</Badge> : <Badge>Hidden</Badge>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => startEdit(it)} className="rounded-md p-1.5 text-muted hover:text-content" aria-label="Edit">
+                  <button type="button" onClick={() => startEdit(it)} className="rounded-md p-1.5 text-muted hover:text-content" aria-label={t("admin.experience.edit")}>
                     <Icon name="Pencil" className="h-4 w-4" />
                   </button>
                   <ConfirmButton
-                    confirmLabel="Delete"
+                    confirmLabel={t("admin.experience.delete")}
                     onConfirm={async () => {
                       const res = await deleteExperience(it.id);
                       if (!res.error) router.refresh();
                       return res;
                     }}
-                    successMessage="Deleted"
+                    successMessage={t("admin.experience.deleted")}
                     className="text-red-400 hover:bg-red-500/10"
                   >
                     <Icon name="Trash2" className="h-4 w-4" />

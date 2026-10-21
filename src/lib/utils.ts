@@ -31,12 +31,13 @@ export function uniqueSlug(base: string, existing: Iterable<string>): string {
 /** Format a date as e.g. "Mar 2024" or "2024 — present". */
 export function formatDate(
   date: Date | string | null | undefined,
-  opts: Intl.DateTimeFormatOptions = { month: "short", year: "numeric" }
+  opts: Intl.DateTimeFormatOptions = { month: "short", year: "numeric" },
+  locale = "en-US"
 ): string {
   if (!date) return "";
   const d = typeof date === "string" ? new Date(date) : date;
   if (Number.isNaN(d.getTime())) return "";
-  return new Intl.DateTimeFormat("en-US", opts).format(d);
+  return new Intl.DateTimeFormat(locale, opts).format(d);
 }
 
 /** Build an absolute URL from the configured SITE_URL. */

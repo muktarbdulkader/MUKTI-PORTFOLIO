@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/db";
 import { AdminPage, PageHeader } from "@/components/admin/page";
 import { SettingsForm } from "@/components/admin/settings-form";
+import { getI18n } from "@/lib/i18n/server";
 
 export default async function AdminSettingsPage() {
+  const { t } = await getI18n();
   const settings = await prisma.siteSettings.findFirst();
 
   const mediaImages = await prisma.media.findMany({
@@ -25,8 +27,8 @@ export default async function AdminSettingsPage() {
   return (
     <AdminPage>
       <PageHeader
-        title="Settings"
-        description="Site-wide metadata, appearance, and sharing."
+        title={t("admin.settings.title")}
+        description={t("admin.settings.description")}
       />
       <div className="mt-8">
         <SettingsForm settings={initial} mediaImages={mediaImages} />

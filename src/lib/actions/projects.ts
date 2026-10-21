@@ -28,7 +28,7 @@ export async function createProject(input: ProjectInput): Promise<ProjectMutatio
   await requireAdmin();
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: "Validation failed.", fieldErrors: mapErrors(parsed.error.issues) };
+    return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   }
   const data = parsed.data;
   const slug = await computeSlug(data.title, data.slug);
@@ -64,17 +64,17 @@ export async function createProject(input: ProjectInput): Promise<ProjectMutatio
     revalidatePath("/", "layout");
     return { ok: true, id: project.id, slug };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to create project." };
+    return { error: err instanceof Error ? err.message : "errors.failedCreate" };
   }
 }
 
 export async function updateProject(id: string, input: ProjectInput): Promise<ProjectMutationResult> {
   await requireAdmin();
   const existing = await prisma.project.findUnique({ where: { id } });
-  if (!existing) return { error: "Project not found." };
+  if (!existing) return { error: "errors.notFound" };
   const parsed = projectSchema.safeParse(input);
   if (!parsed.success) {
-    return { error: "Validation failed.", fieldErrors: mapErrors(parsed.error.issues) };
+    return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   }
   const data = parsed.data;
   const slug = await computeSlug(data.title, data.slug, id);
@@ -121,7 +121,7 @@ export async function updateProject(id: string, input: ProjectInput): Promise<Pr
     revalidatePath("/", "layout");
     return { ok: true, id, slug };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update project." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -132,7 +132,7 @@ export async function deleteProject(id: string): Promise<{ ok?: boolean; error?:
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete project." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }
 
@@ -143,7 +143,7 @@ export async function setProjectStatus(
   await requireAdmin();
   try {
     const existing = await prisma.project.findUnique({ where: { id } });
-    if (!existing) return { error: "Project not found." };
+    if (!existing) return { error: "errors.notFound" };
     await prisma.project.update({
       where: { id },
       data: {
@@ -155,7 +155,7 @@ export async function setProjectStatus(
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to change status." };
+    return { error: err instanceof Error ? err.message : "errors.changeStatus" };
   }
 }
 

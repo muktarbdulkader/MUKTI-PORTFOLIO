@@ -1,6 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Ethiopic } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/lib/i18n/provider";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import { themeBootScript } from "@/lib/theme";
+import { getI18n, getLocale } from "@/lib/i18n/server";
+import { LANGUAGES } from "@/lib/i18n/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,62 +17,90 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/* Ethiopic-script fallback so Amharic renders with proper glyph shapes. */
+const notoEthiopic = Noto_Sans_Ethiopic({
+  variable: "--font-ethiopic",
+  subsets: ["ethiopic"],
+});
+
 const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Mukti — Software Engineer & Full-Stack Developer",
-    template: "%s — Mukti",
-  },
-  description:
-    "Mukti is a software engineer and full-stack developer building web and mobile applications. Explore projects, skills, and ways to collaborate.",
-  keywords: [
-    "Mukti",
-    "software engineer",
-    "full-stack developer",
-    "web development",
-    "mobile development",
-    "Next.js",
-    "Flutter",
-  ],
-  authors: [{ name: "Mukti" }],
-  openGraph: {
-    type: "website",
-    url: siteUrl,
-    siteName: "Mukti — Software Engineer",
-    title: "Mukti — Software Engineer & Full-Stack Developer",
-    description:
-      "Building digital products that solve real problems. Explore projects, skills, and ways to collaborate.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Mukti — Software Engineer & Full-Stack Developer",
-    description: "Building digital products that solve real problems.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+/**
+ * The root layout reads the visitor's language cookie, which is request-time
+ * data. With Cache Components enabled this route must be allowed to block
+ * instead of being prerendered at build time.
+ */
+export const instant = false;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { dict } = await getI18n();
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: dict.meta.siteTitle,
+      template: "%s — Mukti",
+    },
+    description: dict.meta.siteDescription,
+    keywords: [
+      "Mukti",
+      "software engineer",
+      "full-stack developer",
+      "web development",
+      "mobile development",
+      "Next.js",
+      "Flutter",
+    ],
+    authors: [{ name: "Mukti" }],
+    openGraph: {
+      type: "website",
+      url: siteUrl,
+      siteName: dict.meta.siteTitle,
+      title: dict.meta.siteTitle,
+      description: dict.meta.ogDescription,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.siteTitle,
+      description: dict.meta.ogDescription,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export const viewport: Viewport = {
-  themeColor: "#09090b",
+  themeColor: "#08090D",
   colorScheme: "dark",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang={LANGUAGES[locale].tag.split("-")[0]}
+      dir={LANGUAGES[locale].dir}
+      /* The theme boot script writes accent variables onto <html> before
+         hydration — the mismatch is intentional and harmless. */
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} ${notoEthiopic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-canvas text-content">
-        {children}
+        {/* Applies the stored accent theme before first paint (no flash). */}
+        <script
+          dangerouslySetInnerHTML={{ __html: themeBootScript() }}
+          suppressHydrationWarning
+        />
+        <ThemeProvider>
+          <LanguageProvider initialLocale={locale}>{children}</LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

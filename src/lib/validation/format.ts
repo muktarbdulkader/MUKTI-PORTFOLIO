@@ -24,5 +24,5 @@ export function mapZodErrors(
  * Return the first human-readable message from a Zod v4 error.
  */
 export function firstZodError(issues: $ZodIssue[]): string {
-  return issues[0]?.message ?? "Invalid input.";
+  return issues[0]?.message ?? "errors.invalidInput";
 }

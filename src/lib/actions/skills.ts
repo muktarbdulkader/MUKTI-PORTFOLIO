@@ -11,26 +11,26 @@ export type SkillResult = { ok?: boolean; error?: string; fieldErrors?: Record<s
 export async function createSkill(input: SkillInput): Promise<SkillResult> {
   await requireAdmin();
   const parsed = skillSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   try {
     await prisma.skill.create({ data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to create skill." };
+    return { error: err instanceof Error ? err.message : "errors.failedCreate" };
   }
 }
 
 export async function updateSkill(id: string, input: SkillInput): Promise<SkillResult> {
   await requireAdmin();
   const parsed = skillSchema.safeParse(input);
-  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapErrors(parsed.error.issues) };
+  if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   try {
     await prisma.skill.update({ where: { id }, data: parsed.data });
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update skill." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 
@@ -41,7 +41,7 @@ export async function deleteSkill(id: string): Promise<{ ok?: boolean; error?: s
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete skill." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }
 
@@ -52,7 +52,7 @@ export async function toggleSkillPublished(id: string, published: boolean): Prom
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to update skill." };
+    return { error: err instanceof Error ? err.message : "errors.failedUpdate" };
   }
 }
 

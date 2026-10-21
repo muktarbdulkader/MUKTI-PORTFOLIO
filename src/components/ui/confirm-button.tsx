@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type ReactNode } from "react";
 import { Button, type ButtonProps } from "./button";
+import { useI18n } from "@/lib/i18n/provider";
 
 type Mode = "idle" | "confirm" | "done" | "error";
 
@@ -23,6 +24,7 @@ export function ConfirmButton({
   onConfirm: () => Promise<{ ok?: boolean; error?: string } | void>;
   successMessage?: string;
 } & Omit<ButtonProps, "onClick">) {
+  const { t } = useI18n();
   const [pending, start] = useTransition();
   const [mode, setMode] = useState<Mode>("idle");
   const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
@@ -46,7 +48,7 @@ export function ConfirmButton({
             });
           }}
         >
-          {pending ? "Working…" : confirmLabel}
+          {pending ? t("admin.common.working") : confirmLabel}
         </Button>
         <Button
           size="sm"
@@ -54,7 +56,7 @@ export function ConfirmButton({
           disabled={pending}
           onClick={() => setMode("idle")}
         >
-          Cancel
+          {t("admin.common.cancel")}
         </Button>
         {message ? (
           <span className="text-xs text-muted">{message}</span>
@@ -68,14 +70,14 @@ export function ConfirmButton({
       <span className="inline-flex items-center gap-2">
         <span className="text-xs text-red-400">{errorMsg}</span>
         <Button size="sm" variant="ghost" onClick={() => setMode("idle")}>
-          Retry
+          {t("admin.common.retry")}
         </Button>
       </span>
     );
   }
 
   if (mode === "done") {
-    return <span className="text-xs text-emerald-400">{successMessage ?? "Done"}</span>;
+    return <span className="text-xs text-emerald-400">{successMessage ?? t("admin.common.done")}</span>;
   }
 
   return (

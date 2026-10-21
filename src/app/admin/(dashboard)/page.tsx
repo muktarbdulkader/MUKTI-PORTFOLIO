@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getI18n } from "@/lib/i18n/server";
+import { LANGUAGES } from "@/lib/i18n/config";
 import { formatDate } from "@/lib/utils";
 
 async function getStats() {
@@ -61,42 +63,66 @@ function StatCard({
 }
 
 export default async function AdminOverviewPage() {
+  const { t, locale } = await getI18n();
   const stats = await getStats();
+  const dateLocale = LANGUAGES[locale].tag;
 
   const quickActions = [
-    { label: "New project", href: "/admin/projects/new", icon: "Plus" },
-    { label: "Edit profile", href: "/admin/profile", icon: "User" },
-    { label: "Manage skills", href: "/admin/skills", icon: "Wrench" },
-    { label: "View messages", href: "/admin/messages", icon: "MessageSquare" },
-  ];
+    { key: "newProject", href: "/admin/projects/new", icon: "Plus" },
+    { key: "editProfile", href: "/admin/profile", icon: "User" },
+    { key: "manageSkills", href: "/admin/skills", icon: "Wrench" },
+    { key: "viewMessages", href: "/admin/messages", icon: "MessageSquare" },
+  ] as const;
 
   return (
     <AdminPage>
       <PageHeader
-        title="Overview"
-        description="A snapshot of your portfolio content."
+        title={t("admin.overview.title")}
+        description={t("admin.overview.description")}
         action={
           <Link href="/admin/projects/new" className={buttonVariants("primary", "md")}>
-            <Icon name="Plus" className="h-4 w-4" /> New project
+            <Icon name="Plus" className="h-4 w-4" /> {t("admin.overview.newProject")}
           </Link>
         }
       />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total projects" value={stats.total} icon="FolderKanban" tone="accent" />
-        <StatCard label="Published" value={stats.published} icon="CheckCircle2" tone="success" />
-        <StatCard label="Drafts" value={stats.drafts} icon="FileText" tone="warning" />
-        <StatCard label="Unread messages" value={stats.unread} icon="MessageSquare" tone="violet" />
+        <StatCard
+          label={t("admin.overview.totalProjects")}
+          value={stats.total}
+          icon="FolderKanban"
+          tone="accent"
+        />
+        <StatCard
+          label={t("admin.overview.published")}
+          value={stats.published}
+          icon="CheckCircle2"
+          tone="success"
+        />
+        <StatCard
+          label={t("admin.overview.drafts")}
+          value={stats.drafts}
+          icon="FileText"
+          tone="warning"
+        />
+        <StatCard
+          label={t("admin.overview.unreadMessages")}
+          value={stats.unread}
+          icon="MessageSquare"
+          tone="violet"
+        />
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">
-            Recent updates
+            {t("admin.overview.recentUpdates")}
           </h2>
           <div className="mt-3 space-y-2">
             {stats.recent.length === 0 ? (
-              <Card className="p-5 text-sm text-muted">No projects yet.</Card>
+              <Card className="p-5 text-sm text-muted">
+                {t("admin.overview.noProjects")}
+              </Card>
             ) : (
               stats.recent.map((p) => (
                 <Card key={p.id} className="flex items-center justify-between p-4">
@@ -107,7 +133,11 @@ export default async function AdminOverviewPage() {
                     >
                       {p.title}
                     </Link>
-                    <p className="text-xs text-faint">Updated {formatDate(p.updatedAt)}</p>
+                    <p className="text-xs text-faint">
+                      {t("admin.overview.updatedAt", {
+                        date: formatDate(p.updatedAt, undefined, dateLocale),
+                      })}
+                    </p>
                   </div>
                   <StatusBadge status={p.status} />
                 </Card>
@@ -118,7 +148,7 @@ export default async function AdminOverviewPage() {
 
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wide text-faint">
-            Quick actions
+            {t("admin.overview.quickActions")}
           </h2>
           <div className="mt-3 space-y-2">
             {quickActions.map((a) => (
@@ -129,7 +159,7 @@ export default async function AdminOverviewPage() {
               >
                 <span className="flex items-center gap-3">
                   <Icon name={a.icon} className="h-4 w-4 text-accent" />
-                  {a.label}
+                  {t(`admin.overview.${a.key}`)}
                 </span>
                 <Icon name="ChevronRight" className="h-4 w-4 text-faint" />
               </Link>

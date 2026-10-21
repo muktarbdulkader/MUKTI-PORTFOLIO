@@ -37,7 +37,7 @@ export async function uploadMedia(formData: FormData): Promise<MediaResult> {
   await requireAdmin();
 
   const file = formData.get("file");
-  if (!(file instanceof File)) return { error: "No file provided." };
+  if (!(file instanceof File)) return { error: "errors.noFileProvided" };
 
   const categoryRaw = String(formData.get("category") ?? "MISC");
   const category = (VALID_CATEGORIES as readonly string[]).includes(categoryRaw)
@@ -78,7 +78,7 @@ export async function uploadMedia(formData: FormData): Promise<MediaResult> {
       },
     };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Upload failed." };
+    return { error: err instanceof Error ? err.message : "errors.uploadFailed" };
   }
 }
 
@@ -92,6 +92,6 @@ export async function deleteMedia(id: string): Promise<{ ok?: boolean; error?: s
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to delete file." };
+    return { error: err instanceof Error ? err.message : "errors.failedDelete" };
   }
 }

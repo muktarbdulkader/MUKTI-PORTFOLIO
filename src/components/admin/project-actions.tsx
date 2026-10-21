@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { ConfirmButton } from "@/components/ui/confirm-button";
 import { setProjectStatus, deleteProject } from "@/lib/actions/projects";
 import type { ProjectStatusValue } from "@/components/ui/status-badge";
+import { useI18n } from "@/lib/i18n/provider";
 
 export function ProjectActions({ id, status }: { id: string; status: ProjectStatusValue }) {
   const router = useRouter();
+  const { t } = useI18n();
   const [pending, start] = useTransition();
 
   const change = (next: ProjectStatusValue) =>
@@ -25,7 +27,7 @@ export function ProjectActions({ id, status }: { id: string; status: ProjectStat
           onClick={() => change("PUBLISHED")}
           className="rounded-md px-2 py-1 text-xs text-emerald-400 hover:bg-emerald-500/10 disabled:opacity-50"
         >
-          Publish
+          {t("admin.projects.publish")}
         </button>
       ) : (
         <button
@@ -34,20 +36,20 @@ export function ProjectActions({ id, status }: { id: string; status: ProjectStat
           onClick={() => change("UNPUBLISHED")}
           className="rounded-md px-2 py-1 text-xs text-amber-400 hover:bg-amber-500/10 disabled:opacity-50"
         >
-          Unpublish
+          {t("admin.projects.unpublish")}
         </button>
       )}
       <ConfirmButton
-        confirmLabel="Delete"
+        confirmLabel={t("admin.projects.delete")}
         onConfirm={async () => {
           const res = await deleteProject(id);
           if (!res.error) router.refresh();
           return res;
         }}
-        successMessage="Deleted"
+        successMessage={t("admin.projects.deleted")}
         className="text-xs text-red-400 hover:bg-red-500/10"
       >
-        Delete
+        {t("admin.projects.delete")}
       </ConfirmButton>
     </div>
   );
