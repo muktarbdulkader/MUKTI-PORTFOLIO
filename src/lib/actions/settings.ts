@@ -1,0 +1,39 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth/guard";
+import { settingsSchema, type SettingsInput } from "@/lib/validation/schemas";
+import { mapZodErrors } from "@/lib/validation/format";
+
+export type SettingsResult = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
+
+export async function updateSettings(input: SettingsInput): Promise<SettingsResult> {
+  await requireAdmin();
+  const parsed = settingsSchema.safeParse(input);
+  if (!parsed.success) return { error: "Validation failed.", fieldErrors: mapZodErrors(parsed.error.issues) };
+  const data = parsed.data;
+  const row = {
+    siteTitle: data.siteTitle,
+    metaDescription: data.metaDescription,
+    favicon: data.favicon,
+    footerContent: data.footerContent,
+    socialLinks: (data.socialLinks ?? null) as unknown,
+    contactEmail: data.contactEmail,
+    themeAccent: data.themeAccent,
+    cvVisible: data.cvVisible,
+    socialImageId: data.socialImageId ?? null,
+  };
+  try {
+    const existing = await prisma.siteSettings.findFirst();
+    if (existing) {
+      await prisma.siteSettings.update({ where: { id: existing.id }, data: row });
+    } else {
+      await prisma.siteSettings.create({ data: row });
+    }
+    revalidatePath("/", "layout");
+    return { ok: true };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Failed to update settings." };
+  }
+}
