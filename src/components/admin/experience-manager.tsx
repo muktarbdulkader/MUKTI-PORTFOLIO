@@ -103,7 +103,17 @@ export function ExperienceManager({
   const submit = () => {
     setError(null);
     start(async () => {
-      const res = editingId ? await updateExperience(editingId, form) : await createExperience(form);
+      const payload = {
+        ...form,
+        kind: form.kind as "EDUCATION" | "INTERNSHIP" | "EMPLOYMENT" | "CERTIFICATION" | "TRAINING" | "ACADEMIC_PROJECT" | "ACHIEVEMENT",
+        // Zod's experienceSchema transforms string dates to Date objects server-side.
+        // We cast here so TypeScript is happy passing the raw form strings.
+        startDate: form.startDate as unknown as Date,
+        endDate: form.endDate as unknown as Date,
+        organization: form.organization || undefined,
+        description: form.description || undefined,
+      };
+      const res = editingId ? await updateExperience(editingId, payload) : await createExperience(payload);
       if (res.error) {
         setError(res.error);
         return;

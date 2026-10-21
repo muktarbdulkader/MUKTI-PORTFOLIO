@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { skillSchema, type SkillInput } from "@/lib/validation/schemas";
+import type { $ZodIssue } from "zod/v4/core";
 
 export type SkillResult = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
 
@@ -55,10 +56,13 @@ export async function toggleSkillPublished(id: string, published: boolean): Prom
   }
 }
 
-function mapErrors(issues: Array<{ path: (string | number)[]; message: string }>): Record<string, string> {
+function mapErrors(issues: $ZodIssue[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const issue of issues) {
-    const key = issue.path.filter((p) => typeof p === "string").join(".");
+    const key = issue.path
+      .filter((p): p is string | number => typeof p !== "symbol")
+      .map(String)
+      .join(".");
     if (key && !out[key]) out[key] = issue.message;
   }
   return out;

@@ -77,7 +77,7 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="sm:col-span-3 lg:col-span-1">
             <label className="mb-1.5 block text-sm font-medium text-content">File</label>
-            <Input ref={fileRef as never} type="file" accept={isCV ? "application/pdf" : "image/*"} />
+            <input ref={fileRef} type="file" accept={isCV ? "application/pdf" : "image/*"} className="block w-full rounded-xl border border-border-subtle bg-elevated px-3 py-2.5 text-sm text-content file:mr-3 file:rounded-lg file:border-0 file:bg-accent/15 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-accent hover:file:bg-accent/25" />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-content">Category</label>

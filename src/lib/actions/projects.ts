@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { projectSchema, type ProjectInput } from "@/lib/validation/schemas";
 import { slugify, uniqueSlug } from "@/lib/utils";
+import type { $ZodIssue } from "zod/v4/core";
 
 export type ProjectMutationResult = {
   ok?: boolean;
@@ -166,10 +167,13 @@ async function syncScreenshots(projectId: string, mediaIds: string[]): Promise<v
   }
 }
 
-function mapErrors(issues: Array<{ path: (string | number)[]; message: string }>): Record<string, string> {
+function mapErrors(issues: $ZodIssue[]): Record<string, string> {
   const out: Record<string, string> = {};
   for (const issue of issues) {
-    const key = issue.path.filter((p) => typeof p === "string").join(".");
+    const key = issue.path
+      .filter((p): p is string | number => typeof p !== "symbol")
+      .map(String)
+      .join(".");
     if (key && !out[key]) out[key] = issue.message;
   }
   return out;

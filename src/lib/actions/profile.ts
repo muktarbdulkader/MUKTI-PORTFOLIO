@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { profileSchema, type ProfileInput } from "@/lib/validation/schemas";
 import { mapZodErrors } from "@/lib/validation/format";
+import { Prisma } from "@/generated/prisma/client";
 
 export type ProfileResult = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
 
@@ -28,7 +29,8 @@ export async function updateProfile(input: ProfileInput): Promise<ProfileResult>
     publicEmail: data.publicEmail,
     githubUrl: data.githubUrl,
     linkedinUrl: data.linkedinUrl,
-    otherLinks: (data.otherLinks ?? null) as unknown,
+    // Prisma Json fields require InputJsonValue — cast from the Zod-validated record
+    otherLinks: data.otherLinks !== undefined ? (data.otherLinks as Prisma.InputJsonValue) : Prisma.JsonNull,
     isAvailable: data.isAvailable,
     aboutVisible: data.aboutVisible,
     cvVisible: data.cvVisible,

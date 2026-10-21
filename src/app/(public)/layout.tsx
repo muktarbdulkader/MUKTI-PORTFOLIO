@@ -9,7 +9,9 @@ export default function PublicLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <SiteHeader />
+      <Suspense fallback={null}>
+        <SiteHeader />
+      </Suspense>
       <main className="flex-1">{children}</main>
       <Suspense fallback={null}>
         <SiteFooter />

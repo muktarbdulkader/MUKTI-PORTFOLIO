@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { settingsSchema, type SettingsInput } from "@/lib/validation/schemas";
 import { mapZodErrors } from "@/lib/validation/format";
+import { Prisma } from "@/generated/prisma/client";
 
 export type SettingsResult = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
 
@@ -18,7 +19,8 @@ export async function updateSettings(input: SettingsInput): Promise<SettingsResu
     metaDescription: data.metaDescription,
     favicon: data.favicon,
     footerContent: data.footerContent,
-    socialLinks: (data.socialLinks ?? null) as unknown,
+    // Prisma Json fields require InputJsonValue — cast from the Zod-validated record
+    socialLinks: data.socialLinks !== undefined ? (data.socialLinks as Prisma.InputJsonValue) : Prisma.JsonNull,
     contactEmail: data.contactEmail,
     themeAccent: data.themeAccent,
     cvVisible: data.cvVisible,

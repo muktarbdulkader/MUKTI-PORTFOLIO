@@ -36,7 +36,7 @@ export async function GET(
   try {
     const buffer = await readUpload(media.storageKey);
     const isPdf = media.mimeType === "application/pdf";
-    return new Response(buffer, {
+    return new Response(new Uint8Array(buffer), {
       headers: {
         "Content-Type": media.mimeType,
         "Content-Disposition": isPdf

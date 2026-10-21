@@ -9,9 +9,11 @@ import {
   getRelatedProjects,
 } from "@/lib/queries";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/projects/[slug]">): Promise<Metadata> {
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = await getPublishedProjectBySlug(slug).catch(() => null);
   if (!project) {
@@ -28,11 +30,7 @@ export async function generateMetadata({
   };
 }
 
-async function ProjectContent({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+async function ProjectContent({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getPublishedProjectBySlug(slug);
   if (!project || project.status !== "PUBLISHED") {
@@ -53,7 +51,7 @@ function ContentFallback() {
   );
 }
 
-export default function ProjectPage({ params }: PageProps<"/projects/[slug]">) {
+export default function ProjectPage({ params }: Props) {
   return (
     <Suspense fallback={<ContentFallback />}>
       <ProjectContent params={params} />

@@ -3,6 +3,8 @@
 import { useState, useTransition, type ReactNode } from "react";
 import { Button, type ButtonProps } from "./button";
 
+type Mode = "idle" | "confirm" | "done" | "error";
+
 /**
  * A button that asks for confirmation before running an async server action.
  * Useful for destructive operations (delete, unpublish).
@@ -22,11 +24,10 @@ export function ConfirmButton({
   successMessage?: string;
 } & Omit<ButtonProps, "onClick">) {
   const [pending, start] = useTransition();
-  const [state, setState] = useState<{ mode: "idle" | "confirm" | "done" | "error"; msg?: string }>({
-    mode: "idle",
-  });
+  const [mode, setMode] = useState<Mode>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
 
-  if (state.mode === "confirm") {
+  if (mode === "confirm") {
     return (
       <span className="inline-flex items-center gap-2">
         <Button
@@ -37,10 +38,11 @@ export function ConfirmButton({
             start(async () => {
               const res = await onConfirm();
               if (res && res.error) {
-                setState({ mode: "error", msg: res.error });
+                setErrorMsg(res.error);
+                setMode("error");
                 return;
               }
-              setState({ mode: "done", msg: successMessage });
+              setMode("done");
             });
           }}
         >
@@ -50,26 +52,37 @@ export function ConfirmButton({
           size="sm"
           variant="ghost"
           disabled={pending}
-          onClick={() => setState({ mode: "idle" })}
+          onClick={() => setMode("idle")}
         >
           Cancel
         </Button>
-        {state.mode === "error" ? (
-          <span className="text-xs text-red-400">{state.msg}</span>
+        {message ? (
+          <span className="text-xs text-muted">{message}</span>
         ) : null}
       </span>
     );
   }
 
-  if (state.mode === "done") {
-    return <span className="text-xs text-emerald-400">{state.msg ?? "Done"}</span>;
+  if (mode === "error") {
+    return (
+      <span className="inline-flex items-center gap-2">
+        <span className="text-xs text-red-400">{errorMsg}</span>
+        <Button size="sm" variant="ghost" onClick={() => setMode("idle")}>
+          Retry
+        </Button>
+      </span>
+    );
+  }
+
+  if (mode === "done") {
+    return <span className="text-xs text-emerald-400">{successMessage ?? "Done"}</span>;
   }
 
   return (
     <Button
       size="sm"
       variant="ghost"
-      onClick={() => setState({ mode: "confirm" })}
+      onClick={() => setMode("confirm")}
       {...props}
     >
       {children}

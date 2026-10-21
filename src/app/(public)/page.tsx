@@ -8,6 +8,7 @@ import {
   getPublishedExperience,
   getPublishedServices,
 } from "@/lib/queries";
+import { connection } from "next/server";
 import { Hero } from "@/components/sections/hero";
 import { About } from "@/components/sections/about";
 import { Skills } from "@/components/sections/skills";
@@ -17,6 +18,7 @@ import { Services } from "@/components/sections/services";
 import { ContactCTA } from "@/components/sections/contact-cta";
 
 async function HomeContent() {
+  await connection();
   const [profile, projects, skills, experience, services] = await Promise.all([
     getProfile(),
     getFeaturedProjects(),
