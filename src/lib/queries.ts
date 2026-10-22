@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "./db";
 import { defaultProfile, defaultSettings } from "./defaults";
 import type {
@@ -20,9 +21,27 @@ const FULL_PROJECT_INCLUDE = {
   screenshots: { orderBy: { displayOrder: "asc" }, include: { media: true } },
 } as const;
 
+/**
+ * Public content is read through cached scopes (`"use cache"`) so it can be
+ * prerendered into the static shell.
+ *
+ * Reading the database directly while prerendering opens a connection, and the
+ * PostgreSQL SASL handshake calls `crypto.getRandomValues()`. Next.js treats
+ * that as synchronous IO and aborts the prerender
+ * (`https://nextjs.org/docs/messages/blocking-prerender-crypto`). Inside a
+ * cache scope the call is allowed and the content is served from the cache
+ * afterwards.
+ *
+ * Every entry is tagged. The admin server actions expire the matching tag with
+ * `updateTag()` after a write, so edits show up immediately.
+ */
+
 // --- Site ------------------------------------------------------------------
 
 export async function getProfile() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("profile");
   const row = await prisma.profile.findFirst({
     include: { profileImage: true, cvFile: true },
   });
@@ -33,6 +52,9 @@ export async function getProfile() {
 }
 
 export async function getSettings() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("settings");
   const row = await prisma.siteSettings.findFirst({ include: { socialImage: true } });
   return (row ?? defaultSettings) as SiteSettings & {
     socialImage: Media | null;
@@ -42,6 +64,9 @@ export async function getSettings() {
 // --- Projects (public: only PUBLISHED) -------------------------------------
 
 export async function getPublishedProjects() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("projects");
   return prisma.project.findMany({
     where: { status: "PUBLISHED" },
     orderBy: [{ displayOrder: "asc" }, { createdAt: "desc" }],
@@ -50,6 +75,9 @@ export async function getPublishedProjects() {
 }
 
 export async function getFeaturedProjects(limit = 6) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("projects");
   return prisma.project.findMany({
     where: { status: "PUBLISHED", isFeatured: true },
     orderBy: [{ displayOrder: "asc" }],
@@ -59,6 +87,9 @@ export async function getFeaturedProjects(limit = 6) {
 }
 
 export async function getPublishedProjectBySlug(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("projects");
   return prisma.project.findUnique({
     where: { slug },
     include: FULL_PROJECT_INCLUDE,
@@ -66,6 +97,9 @@ export async function getPublishedProjectBySlug(slug: string) {
 }
 
 export async function getRelatedProjects(slug: string, category: string | null | undefined, take = 3) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("projects");
   return prisma.project.findMany({
     where: {
       status: "PUBLISHED",
@@ -87,6 +121,9 @@ export type ProjectWithDetails = Project & {
 // --- Skills / Experience / Services (public: only published) ---------------
 
 export async function getPublishedSkills() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("skills");
   return prisma.skill.findMany({
     where: { published: true },
     orderBy: [{ displayOrder: "asc" }, { name: "asc" }],
@@ -94,6 +131,9 @@ export async function getPublishedSkills() {
 }
 
 export async function getPublishedExperience() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("experience");
   return prisma.experience.findMany({
     where: { published: true },
     orderBy: [{ displayOrder: "asc" }, { startDate: "desc" }],
@@ -101,6 +141,9 @@ export async function getPublishedExperience() {
 }
 
 export async function getPublishedServices() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("services");
   return prisma.service.findMany({
     where: { published: true },
     orderBy: [{ displayOrder: "asc" }],

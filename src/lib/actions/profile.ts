@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { profileSchema, type ProfileInput } from "@/lib/validation/schemas";
@@ -44,6 +44,7 @@ export async function updateProfile(input: ProfileInput): Promise<ProfileResult>
     } else {
       await prisma.profile.create({ data: row });
     }
+    updateTag("profile");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

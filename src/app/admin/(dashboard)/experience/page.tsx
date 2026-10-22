@@ -12,6 +12,12 @@ const EXPERIENCE_KINDS = [
   "ACHIEVEMENT",
 ];
 
+/**
+ * The admin dashboard always reads live rows from the database, so this
+ * segment is allowed to block instead of being prerendered.
+ */
+export const instant = false;
+
 export default async function AdminExperiencePage() {
   const { t } = await getI18n();
   const items = await prisma.experience.findMany({

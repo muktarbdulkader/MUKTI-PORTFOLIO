@@ -3,6 +3,12 @@ import { AdminPage, PageHeader } from "@/components/admin/page";
 import { MediaManager } from "@/components/admin/media-manager";
 import { getI18n } from "@/lib/i18n/server";
 
+/**
+ * The admin dashboard always reads live rows from the database, so this
+ * segment is allowed to block instead of being prerendered.
+ */
+export const instant = false;
+
 export default async function AdminMediaPage() {
   const { t } = await getI18n();
   const media = await prisma.media.findMany({

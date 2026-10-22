@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { experienceSchema, type ExperienceInput } from "@/lib/validation/schemas";
@@ -14,6 +14,7 @@ export async function createExperience(input: ExperienceInput): Promise<Experien
   if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
     await prisma.experience.create({ data: parsed.data });
+    updateTag("experience");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -26,7 +27,12 @@ export async function updateExperience(id: string, input: ExperienceInput): Prom
   const parsed = experienceSchema.safeParse(input);
   if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapZodErrors(parsed.error.issues) };
   try {
-    await prisma.experience.update({ where: { id }, data: parsed.data });
+    await prisma.experience.update({
+      where: { id },
+      // `null` (not `undefined`) so clearing a link actually removes it.
+      data: { ...parsed.data, url: parsed.data.url ?? null, urlLabel: parsed.data.urlLabel ?? null },
+    });
+    updateTag("experience");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -38,6 +44,7 @@ export async function deleteExperience(id: string): Promise<{ ok?: boolean; erro
   await requireAdmin();
   try {
     await prisma.experience.delete({ where: { id } });
+    updateTag("experience");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

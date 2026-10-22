@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { projectSchema, type ProjectInput } from "@/lib/validation/schemas";
@@ -61,6 +61,7 @@ export async function createProject(input: ProjectInput): Promise<ProjectMutatio
       },
     });
     await syncScreenshots(project.id, data.screenshotIds);
+    updateTag("projects");
     revalidatePath("/", "layout");
     return { ok: true, id: project.id, slug };
   } catch (err) {
@@ -118,6 +119,7 @@ export async function updateProject(id: string, input: ProjectInput): Promise<Pr
         });
       }
     });
+    updateTag("projects");
     revalidatePath("/", "layout");
     return { ok: true, id, slug };
   } catch (err) {
@@ -129,6 +131,7 @@ export async function deleteProject(id: string): Promise<{ ok?: boolean; error?:
   await requireAdmin();
   try {
     await prisma.project.delete({ where: { id } });
+    updateTag("projects");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -152,6 +155,7 @@ export async function setProjectStatus(
           status === "PUBLISHED" && !existing.publishedAt ? new Date() : existing.publishedAt,
       },
     });
+    updateTag("projects");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

@@ -117,6 +117,18 @@ export async function Services({ services }: { services: Service[] }) {
                       <p className="mt-2 text-sm leading-6 text-muted">{s.description}</p>
                     )}
 
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm font-medium text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent"
+                      >
+                        {s.urlLabel || t("services.learnMore")}
+                        <Icon name="ArrowUpRight" className="h-3.5 w-3.5" />
+                      </a>
+                    ) : null}
+
                     {/* Bottom accent line */}
                     <div
                       className="absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-500 group-hover:w-full"

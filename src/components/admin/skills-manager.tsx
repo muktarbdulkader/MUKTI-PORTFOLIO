@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ConfirmButton } from "@/components/ui/confirm-button";
 import { useI18n } from "@/lib/i18n/provider";
+import { translateMessage } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 import {
   createSkill,
@@ -22,37 +23,44 @@ interface Skill {
   icon: string;
   displayOrder: number;
   published: boolean;
+  url: string | null;
+  urlLabel: string | null;
 }
 
-const EMPTY = { name: "", category: "", icon: "Code2", displayOrder: 0, published: true };
+const EMPTY = { name: "", category: "", icon: "Code2", displayOrder: 0, published: true, url: "", urlLabel: "" };
 
 export function SkillsManager({ skills }: { skills: Skill[] }) {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, dict } = useI18n();
   const [pending, start] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY });
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const startEdit = (s: Skill) => {
     setEditingId(s.id);
-    setForm({ name: s.name, category: s.category, icon: s.icon, displayOrder: s.displayOrder, published: s.published });
+    setForm({ name: s.name, category: s.category, icon: s.icon, displayOrder: s.displayOrder, published: s.published, url: s.url ?? "", urlLabel: s.urlLabel ?? "" });
     setError(null);
+    setFieldErrors({});
   };
   const reset = () => {
     setEditingId(null);
     setForm({ ...EMPTY });
     setError(null);
+    setFieldErrors({});
   };
 
   const submit = () => {
     setError(null);
+    setFieldErrors({});
     start(async () => {
       const res = editingId
         ? await updateSkill(editingId, form)
         : await createSkill(form);
       if (res.error) {
-        setError(res.error);
+        setError(translateMessage(dict, res.error));
+        setFieldErrors(res.fieldErrors ?? {});
         return;
       }
       reset();
@@ -85,6 +93,22 @@ export function SkillsManager({ skills }: { skills: Skill[] }) {
               </Field>
               <Field label={t("admin.skills.displayOrder")}>
                 <Input type="number" value={String(form.displayOrder)} onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) || 0 })} />
+              </Field>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label={t("admin.skills.url")}
+                hint={t("admin.skills.urlHint")}
+                error={fieldErrors.url ? translateMessage(dict, fieldErrors.url) : undefined}
+              >
+                <Input type="url" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://..." />
+              </Field>
+              <Field
+                label={t("admin.skills.urlLabel")}
+                hint={t("admin.skills.urlLabelHint")}
+                error={fieldErrors.urlLabel ? translateMessage(dict, fieldErrors.urlLabel) : undefined}
+              >
+                <Input value={form.urlLabel} onChange={(e) => setForm({ ...form, urlLabel: e.target.value })} placeholder={t("admin.skills.urlLabelPlaceholder")} />
               </Field>
             </div>
             <label className="flex cursor-pointer items-center gap-2 text-sm text-content">
@@ -126,6 +150,18 @@ export function SkillsManager({ skills }: { skills: Skill[] }) {
                   <div>
                     <p className="text-sm font-medium text-content">{s.name}</p>
                     <p className="text-xs text-faint">{s.category} · {t("admin.skills.order", { order: s.displayOrder })}</p>
+                    {s.url ? (
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={s.url}
+                        className="mt-1 inline-flex max-w-[220px] items-center gap-1 text-xs text-accent hover:underline"
+                      >
+                        <Icon name="ExternalLink" className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{s.urlLabel || s.url}</span>
+                      </a>
+                    ) : null}
                   </div>
                   {s.published ? (
                       <Badge tone="success">{t("status.published")}</Badge>

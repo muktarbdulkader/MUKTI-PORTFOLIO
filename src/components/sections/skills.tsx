@@ -71,15 +71,30 @@ export async function Skills({ skills }: { skills: Skill[] }) {
             <FadeUp delay={0.1}>
               <div className="mt-10">
                 <Marquee>
-                  {groups.flatMap(([, items]) => items).map((s) => (
-                    <span
-                      key={s.id}
-                      className="mx-2 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/60 px-4 py-2 text-sm font-medium text-muted backdrop-blur-sm transition-colors duration-200 hover:border-accent/40 hover:text-content"
-                    >
-                      <Icon name={s.icon} className="h-4 w-4 text-accent" />
-                      {s.name}
-                    </span>
-                  ))}
+                  {groups.flatMap(([, items]) => items).map((s) =>
+                    s.url ? (
+                      <a
+                        key={s.id}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={s.urlLabel || s.name}
+                        className="mx-2 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/60 px-4 py-2 text-sm font-medium text-muted backdrop-blur-sm transition-colors duration-200 hover:border-accent/40 hover:text-content"
+                      >
+                        <Icon name={s.icon} className="h-4 w-4 text-accent" />
+                        {s.name}
+                        <Icon name="ExternalLink" className="h-3 w-3 text-accent" />
+                      </a>
+                    ) : (
+                      <span
+                        key={s.id}
+                        className="mx-2 inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface/60 px-4 py-2 text-sm font-medium text-muted backdrop-blur-sm transition-colors duration-200 hover:border-accent/40 hover:text-content"
+                      >
+                        <Icon name={s.icon} className="h-4 w-4 text-accent" />
+                        {s.name}
+                      </span>
+                    )
+                  )}
                 </Marquee>
               </div>
             </FadeUp>
@@ -107,15 +122,31 @@ export async function Skills({ skills }: { skills: Skill[] }) {
                           </span>
                         </div>
                         <ul className="flex flex-wrap gap-2">
-                          {items.map((s) => (
-                            <li
-                              key={s.id}
-                              className={`inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent`}
-                            >
-                              <Icon name={s.icon} className={`h-3.5 w-3.5 ${style.icon}`} />
-                              {s.name}
-                            </li>
-                          ))}
+                          {items.map((s) =>
+                            s.url ? (
+                              <li key={s.id}>
+                                <a
+                                  href={s.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={s.urlLabel || s.name}
+                                  className={`inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent`}
+                                >
+                                  <Icon name={s.icon} className={`h-3.5 w-3.5 ${style.icon}`} />
+                                  {s.name}
+                                  <Icon name="ExternalLink" className="h-3 w-3 opacity-70" />
+                                </a>
+                              </li>
+                            ) : (
+                              <li
+                                key={s.id}
+                                className={`inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent`}
+                              >
+                                <Icon name={s.icon} className={`h-3.5 w-3.5 ${style.icon}`} />
+                                {s.name}
+                              </li>
+                            )
+                          )}
                         </ul>
                       </div>
                     </Spotlight>

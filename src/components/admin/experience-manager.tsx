@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ConfirmButton } from "@/components/ui/confirm-button";
 import { useI18n } from "@/lib/i18n/provider";
+import { translateMessage } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 import {
   createExperience,
@@ -25,6 +26,8 @@ interface ExperienceItem {
   current: boolean;
   displayOrder: number;
   published: boolean;
+  url: string | null;
+  urlLabel: string | null;
 }
 
 function toInputDate(d: Date | null | undefined): string {
@@ -49,6 +52,7 @@ export function ExperienceManager({
   const [pending, start] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     kind: defaultKind,
     title: "",
@@ -59,6 +63,8 @@ export function ExperienceManager({
     current: false,
     displayOrder: 0,
     published: true,
+    url: "",
+    urlLabel: "",
   });
 
   const startEdit = (it: ExperienceItem) => {
@@ -73,8 +79,11 @@ export function ExperienceManager({
       current: it.current,
       displayOrder: it.displayOrder,
       published: it.published,
+      url: it.url ?? "",
+      urlLabel: it.urlLabel ?? "",
     });
     setError(null);
+    setFieldErrors({});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const reset = () => {
@@ -89,12 +98,16 @@ export function ExperienceManager({
       current: false,
       displayOrder: 0,
       published: true,
+      url: "",
+      urlLabel: "",
     });
     setError(null);
+    setFieldErrors({});
   };
 
   const submit = () => {
     setError(null);
+    setFieldErrors({});
     start(async () => {
       const payload = {
         ...form,
@@ -108,7 +121,8 @@ export function ExperienceManager({
       };
       const res = editingId ? await updateExperience(editingId, payload) : await createExperience(payload);
       if (res.error) {
-        setError(res.error);
+        setError(translateMessage(dict, res.error));
+        setFieldErrors(res.fieldErrors ?? {});
         return;
       }
       reset();
@@ -141,6 +155,22 @@ export function ExperienceManager({
             <Field label={t("admin.experience.descriptionLabel")}>
               <Textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </Field>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field
+                label={t("admin.experience.url")}
+                hint={t("admin.experience.urlHint")}
+                error={fieldErrors.url ? translateMessage(dict, fieldErrors.url) : undefined}
+              >
+                <Input type="url" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="https://..." />
+              </Field>
+              <Field
+                label={t("admin.experience.urlLabel")}
+                hint={t("admin.experience.urlLabelHint")}
+                error={fieldErrors.urlLabel ? translateMessage(dict, fieldErrors.urlLabel) : undefined}
+              >
+                <Input value={form.urlLabel} onChange={(e) => setForm({ ...form, urlLabel: e.target.value })} placeholder={t("admin.experience.urlLabelPlaceholder")} />
+              </Field>
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label={t("admin.experience.startDate")}><Input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></Field>
               <Field label={t("admin.experience.endDate")}><Input type="date" value={form.endDate} disabled={form.current} onChange={(e) => setForm({ ...form, endDate: e.target.value })} /></Field>
@@ -190,6 +220,18 @@ export function ExperienceManager({
                         : ""}
                   </p>
                   {it.published ? <Badge tone="success">Published</Badge> : <Badge>Hidden</Badge>}
+                  {it.url ? (
+                    <a
+                      href={it.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title={it.url}
+                      className="mt-2 inline-flex max-w-[320px] items-center gap-1 text-xs text-accent hover:underline"
+                    >
+                      <Icon name="ExternalLink" className="h-3 w-3 shrink-0" />
+                      <span className="truncate">{it.urlLabel || it.url}</span>
+                    </a>
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={() => startEdit(it)} className="rounded-md p-1.5 text-muted hover:text-content" aria-label={t("admin.experience.edit")}>

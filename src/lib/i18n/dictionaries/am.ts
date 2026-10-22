@@ -126,6 +126,11 @@ export const am: Dictionary = {
     description:
       "ትምህርት፣ ኢንተርንሽፕ ሥራዎችና በመንገዴ የጉልሠኝ ወልደ ደረጃዎች።",
     present: "አሁን",
+    links: {
+      certificate: "ሰርቲፊካቱን ይመልከቱ",
+      learnMore: "ተጨማሪ ይማሩ",
+      details: "ዝርዝሮችን ይመልከቱ",
+    },
     kinds: {
       EDUCATION: "ትምህርት",
       INTERNSHIP: "ኢንተርንሽፕ",
@@ -145,6 +150,7 @@ export const am: Dictionary = {
     emptyTitle: "አገልግሎቶች በቅድሚያ ይጠብቃሉ",
     emptyDescription:
       "አገልግሎቶች ከአስተዳዳሪ ዳሽቦርድ ይተዳደራሉ እና ከታተሙ በኋላ እዚህ ይታያሉ።",
+    learnMore: "ተጨማሪ ይማሩ",
   },
   contact: {
     eyebrow: "ያግኙኝ",
@@ -244,6 +250,7 @@ export const am: Dictionary = {
   validation: {
     emailInvalid: "ትክክለኛ ኢሜይል ያስገቡ",
     urlInvalid: "ትክክለኛ URL ያስገቡ (https://...)",
+    urlLabelMax: "መልዕክቱ ከ60 ፊደል በታች ያድርጉ",
     passwordMin: "የይለፍ ቃል ቢያንስ 8 ፊደል መልስ ማድረግ አለበት",
     nameMin: "ስምዎን ያስገቡ",
     subjectMin: "ወረጃ ያክሉ",
@@ -396,6 +403,11 @@ export const am: Dictionary = {
       iconHint: "ለምሳሌ Code2፣ Database፣ Flame",
       displayOrder: "የማሳያ ደረጃ",
       published: "የታተሙ",
+      url: "የሊንክ URL",
+      urlHint: "አማራጭ — ወደ መመሪያ፣ ሰርቲፊካት ወይም ማኔጃን ያገናኝ።",
+      urlLabel: "የአዝራር ስም",
+      urlLabelHint: "አማራጭ — ለህዝብ የሚታየው የሊንክ ጽሑፍ።",
+      urlLabelPlaceholder: "ለምሳሌ ሰርቲፊካትን ይመልከቱ",
       add: "ክህሎት ጨምር",
       update: "ክህሎቱን አሻሽል",
       saving: "በማስቀመጥ ላይ…",
@@ -418,6 +430,11 @@ export const am: Dictionary = {
       iconHint: "ለምሳሌ Code፣ Smartphone፣ Globe",
       displayOrder: "የማሳያ ደረጃ",
       published: "የታተሙ",
+      url: "የሊንክ URL",
+      urlHint: "አማራጭ — ወደ የአገልግሎት ገጽ ወይም የታምሽና ገጽ።",
+      urlLabel: "የአዝራር ስም",
+      urlLabelHint: "አማራጭ — ለህዝብ የሚታየው የሊንክ ጽሑፍ።",
+      urlLabelPlaceholder: "ለምሳሌ ተጨማሪ ይማሩ",
       add: "አገልግሎት ጨምር",
       update: "አገልግሎቱን አሻሽል",
       saving: "በማስቀመጥ ላይ…",
@@ -445,6 +462,11 @@ export const am: Dictionary = {
       displayOrder: "የማሳያ ደረጃ",
       current: "አሁን ያለው",
       published: "የታተሙ",
+      url: "የሊንክ URL",
+      urlHint: "አማራጭ — ወደ ሰርቲፊካት፣ ወደ ፖርትፎሊዮ ወይም ወደ ተቋማ።",
+      urlLabel: "የአዝራር ስም",
+      urlLabelHint: "አማራጭ — ለህዝብ የሚታየው የሊንክ ጽሑፍ።",
+      urlLabelPlaceholder: "ለምሳሌ ሰርቲፊካትን ይመልከቱ",
       add: "መዝገብ ጨምር",
       update: "መዝገቡን አሻሽል",
       saving: "በማስቀመጥ ላይ…",

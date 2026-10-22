@@ -178,6 +178,11 @@ model Skill {
   published    Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  /// Optional external link (docs, certificate, repository, …).
+  url      String?
+  /// Optional label for the public link button.
+  urlLabel String?
 }
 
 // ---------------------------------------------------------------------------
@@ -198,6 +203,11 @@ model Experience {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
+  /// Optional external link (certificate verification, portfolio, …).
+  url      String?
+  /// Optional label for the public link button.
+  urlLabel String?
+
   @@index([kind, displayOrder])
 }
 
@@ -214,6 +224,11 @@ model Service {
   published    Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  /// Optional external link (service page, booking page, …).
+  url      String?
+  /// Optional label for the public link button.
+  urlLabel String?
 }
 
 // ---------------------------------------------------------------------------

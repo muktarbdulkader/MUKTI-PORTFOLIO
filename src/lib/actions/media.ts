@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import {
@@ -89,6 +89,10 @@ export async function deleteMedia(id: string): Promise<{ ok?: boolean; error?: s
     if (!media) return { ok: true };
     await deleteUpload(media.storageKey);
     await prisma.media.delete({ where: { id } });
+    // Media can be referenced by the profile, a project thumbnail or the social image.
+    updateTag("profile");
+    updateTag("projects");
+    updateTag("settings");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

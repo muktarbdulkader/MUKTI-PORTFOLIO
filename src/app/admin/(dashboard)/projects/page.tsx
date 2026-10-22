@@ -12,6 +12,12 @@ import { getI18n } from "@/lib/i18n/server";
 import { LANGUAGES } from "@/lib/i18n/config";
 import { formatDate } from "@/lib/utils";
 
+/**
+ * The admin dashboard always reads live rows from the database, so this
+ * segment is allowed to block instead of being prerendered.
+ */
+export const instant = false;
+
 export default async function AdminProjectsPage() {
   const { t, locale } = await getI18n();
   const projects = await prisma.project.findMany({

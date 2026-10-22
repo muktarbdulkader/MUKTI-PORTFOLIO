@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { skillSchema, type SkillInput } from "@/lib/validation/schemas";
@@ -14,6 +14,7 @@ export async function createSkill(input: SkillInput): Promise<SkillResult> {
   if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   try {
     await prisma.skill.create({ data: parsed.data });
+    updateTag("skills");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -26,7 +27,12 @@ export async function updateSkill(id: string, input: SkillInput): Promise<SkillR
   const parsed = skillSchema.safeParse(input);
   if (!parsed.success) return { error: "errors.validationFailed", fieldErrors: mapErrors(parsed.error.issues) };
   try {
-    await prisma.skill.update({ where: { id }, data: parsed.data });
+    await prisma.skill.update({
+      where: { id },
+      // `null` (not `undefined`) so clearing a link actually removes it.
+      data: { ...parsed.data, url: parsed.data.url ?? null, urlLabel: parsed.data.urlLabel ?? null },
+    });
+    updateTag("skills");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -38,6 +44,7 @@ export async function deleteSkill(id: string): Promise<{ ok?: boolean; error?: s
   await requireAdmin();
   try {
     await prisma.skill.delete({ where: { id } });
+    updateTag("skills");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {
@@ -49,6 +56,7 @@ export async function toggleSkillPublished(id: string, published: boolean): Prom
   await requireAdmin();
   try {
     await prisma.skill.update({ where: { id }, data: { published } });
+    updateTag("skills");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

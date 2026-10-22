@@ -37,6 +37,14 @@ export async function ExperienceSection({ items }: { items: Experience[] }) {
   const dateLocale = LANGUAGES[locale].tag;
   if (items.length === 0) return null;
 
+  /** Fallback label for the public link button, based on the record kind. */
+  const defaultLinkLabel = (kind: string) =>
+    kind === "CERTIFICATION"
+      ? t("experience.links.certificate")
+      : kind === "TRAINING" || kind === "ACADEMIC_PROJECT"
+        ? t("experience.links.learnMore")
+        : t("experience.links.details");
+
   return (
     <section
       id="experience"
@@ -146,6 +154,17 @@ export async function ExperienceSection({ items }: { items: Experience[] }) {
                           {item.description}
                         </p>
                       )}
+                      {item.url ? (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-border bg-elevated px-3 py-1.5 text-sm font-medium text-content transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:text-accent"
+                        >
+                          {item.urlLabel || defaultLinkLabel(item.kind)}
+                          <Icon name="ArrowUpRight" className="h-3.5 w-3.5" />
+                        </a>
+                      ) : null}
                     </div>
                   </div>
                 </StaggerItem>

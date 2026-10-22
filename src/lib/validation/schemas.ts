@@ -10,6 +10,15 @@ const optionalUrl = z
   .refine((v) => !v || /^https?:\/\/.+/i.test(v), "validation.urlInvalid")
   .transform((v) => (v ? v : undefined));
 
+/** Optional short label for the public link button, allowing empty string. */
+const optionalUrlLabel = z
+  .string()
+  .trim()
+  .max(60, "validation.urlLabelMax")
+  .optional()
+  .or(z.literal(""))
+  .transform((v) => (v ? v : undefined));
+
 const optionalEmail = z
   .string()
   .trim()
@@ -84,6 +93,8 @@ export const skillSchema = z.object({
   icon: z.string().trim().min(1).max(80).default("Code2"),
   displayOrder: z.number().int().min(0).max(9999).default(0),
   published: z.boolean().default(true),
+  url: optionalUrl,
+  urlLabel: optionalUrlLabel,
 });
 export type SkillInput = z.infer<typeof skillSchema>;
 
@@ -109,6 +120,8 @@ export const experienceSchema = z.object({
   current: z.boolean().default(false),
   displayOrder: z.number().int().min(0).max(9999).default(0),
   published: z.boolean().default(true),
+  url: optionalUrl,
+  urlLabel: optionalUrlLabel,
 });
 export type ExperienceInput = z.infer<typeof experienceSchema>;
 
@@ -116,10 +129,12 @@ export type ExperienceInput = z.infer<typeof experienceSchema>;
 
 export const serviceSchema = z.object({
   title: z.string().trim().min(1, "validation.titleRequired").max(120),
-  description: z.string().trim().optional().transform((v) => v || undefined),
+  description: z.string().trim().optional().transform((v) => (v ? v : undefined)),
   icon: z.string().trim().min(1).max(80).default("Code"),
   displayOrder: z.number().int().min(0).max(9999).default(0),
   published: z.boolean().default(true),
+  url: optionalUrl,
+  urlLabel: optionalUrlLabel,
 });
 export type ServiceInput = z.infer<typeof serviceSchema>;
 

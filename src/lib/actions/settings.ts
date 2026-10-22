@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/guard";
 import { settingsSchema, type SettingsInput } from "@/lib/validation/schemas";
@@ -33,6 +33,7 @@ export async function updateSettings(input: SettingsInput): Promise<SettingsResu
     } else {
       await prisma.siteSettings.create({ data: row });
     }
+    updateTag("settings");
     revalidatePath("/", "layout");
     return { ok: true };
   } catch (err) {

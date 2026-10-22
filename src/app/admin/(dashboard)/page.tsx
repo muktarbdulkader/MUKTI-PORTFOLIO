@@ -62,6 +62,12 @@ function StatCard({
   );
 }
 
+/**
+ * The admin dashboard always reads live rows from the database, so this
+ * segment is allowed to block instead of being prerendered.
+ */
+export const instant = false;
+
 export default async function AdminOverviewPage() {
   const { t, locale } = await getI18n();
   const stats = await getStats();

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@/lib/db";
+import { getPublishedProjects } from "@/lib/queries";
 import { absoluteUrl } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -13,10 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let projectRoutes: MetadataRoute.Sitemap = [];
   try {
-    const projects = await prisma.project.findMany({
-      where: { status: "PUBLISHED" },
-      select: { slug: true, updatedAt: true },
-    });
+    const projects = await getPublishedProjects();
     projectRoutes = projects.map((p) => ({
       url: `${base.replace(/\/$/, "")}/projects/${p.slug}`,
       lastModified: p.updatedAt,
