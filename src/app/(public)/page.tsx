@@ -7,6 +7,7 @@ import {
   getPublishedSkills,
   getPublishedExperience,
   getPublishedServices,
+  getStatistics,
 } from "@/lib/queries";
 import { connection } from "next/server";
 import { Hero } from "@/components/sections/hero";
@@ -15,22 +16,25 @@ import { Skills } from "@/components/sections/skills";
 import { FeaturedProjects } from "@/components/sections/featured-projects";
 import { ExperienceSection } from "@/components/sections/experience";
 import { Services } from "@/components/sections/services";
+import { Statistics } from "@/components/sections/statistics";
 import { ContactCTA } from "@/components/sections/contact-cta";
 
 async function HomeContent() {
   await connection();
-  const [profile, projects, skills, experience, services] = await Promise.all([
+  const [profile, projects, skills, experience, services, stats] = await Promise.all([
     getProfile(),
     getFeaturedProjects(),
     getPublishedSkills(),
     getPublishedExperience(),
     getPublishedServices(),
+    getStatistics(),
   ]);
 
   return (
     <>
       <Hero profile={profile} />
       <About profile={profile} />
+      <Statistics stats={stats} />
       <Skills skills={skills} />
       <FeaturedProjects projects={projects} />
       <ExperienceSection items={experience} />

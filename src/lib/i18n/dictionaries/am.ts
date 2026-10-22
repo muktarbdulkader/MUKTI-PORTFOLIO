@@ -308,6 +308,7 @@ export const am: Dictionary = {
       messages: "መልክቶች",
       media: "ሚዲያ",
       settings: "ቅንብሮች",
+      statistics: "ተሞክሮች",
     },
     login: {
       title: "የአስተዳዳሪ ግባ",
@@ -593,6 +594,11 @@ export const am: Dictionary = {
       tagPlaceholder: "ይጨምሩና Enter ይጫኑ",
       chooseFile: "በመጀመሪያ ፋይል ይምረጡ።",
       saved: "ተቀምጧል።",
+    },
+    statistics: {
+      title: "Statistics",
+      description: "የተሞክሮ ጉልባትን ይቀርቦች።",
+      emptyTitle: "No statistics yet.",
     },
   },
 };

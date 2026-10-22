@@ -150,4 +150,14 @@ export async function getPublishedServices() {
   });
 }
 
+export async function getStatistics() {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("statistics");
+  return prisma.statistic.findMany({
+    where: { published: true, isVisible: true },
+    orderBy: { displayOrder: "asc" },
+  });
+}
+
 export type { Profile, Project, Service, SiteSettings, Skill, Experience, Media };

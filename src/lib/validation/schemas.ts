@@ -138,6 +138,20 @@ export const serviceSchema = z.object({
 });
 export type ServiceInput = z.infer<typeof serviceSchema>;
 
+// --- Statistics --------------------------------------------------------------
+
+export const statisticSchema = z.object({
+  value: z.string().trim().min(1, "validation.valueRequired").max(20),
+  title: z.string().trim().min(1, "validation.titleRequired").max(120),
+  description: z.string().trim().max(300).optional().or(z.literal("")).transform((v) => v || undefined),
+  accentColor: z.string().trim().max(40).default("blue"),
+  icon: z.string().trim().min(1).max(80).default("TrendingUp"),
+  published: z.boolean().default(true),
+  isVisible: z.boolean().default(true),
+  displayOrder: z.number().int().min(0).max(9999).default(0),
+});
+export type StatisticInput = z.infer<typeof statisticSchema>;
+
 // --- Profile ---------------------------------------------------------------
 
 export const profileSchema = z.object({

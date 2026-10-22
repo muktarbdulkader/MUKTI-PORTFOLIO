@@ -313,6 +313,7 @@ export const en = {
       messages: "Messages",
       media: "Media",
       settings: "Settings",
+      statistics: "Statistics",
     },
     login: {
       title: "Admin sign in",
@@ -600,6 +601,11 @@ export const en = {
       tagPlaceholder: "Add and press Enter",
       chooseFile: "Choose a file first.",
       saved: "Saved.",
+    },
+    statistics: {
+      title: "Statistics",
+      description: "Manage statistics cards shown on the home page.",
+      emptyTitle: "No statistics yet.",
     },
   },
 } as const;

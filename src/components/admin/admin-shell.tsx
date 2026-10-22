@@ -20,6 +20,7 @@ const NAV = [
   { key: "messages", href: "/admin/messages", icon: "MessageSquare" },
   { key: "media", href: "/admin/media", icon: "Image" },
   { key: "settings", href: "/admin/settings", icon: "Settings" },
+  { key: "statistics", href: "/admin/statistics", icon: "TrendingUp" },
 ] as const;
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -28,7 +29,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
 
-  const navItems = NAV.map((item) => ({ ...item, label: t(`admin.nav.${item.key}`) }));
+  const navItems = NAV.map((item) => {
+    const translated = t(`admin.nav.${item.key}`);
+    return { ...item, label: translated || item.key.replace(/^[a-z]/, (c) => c.toUpperCase()) };
+});
 
   const isActive = (href: string) =>
     href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);

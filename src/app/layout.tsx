@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Ethiopic } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/provider";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -15,12 +15,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-/* Ethiopic-script fallback so Amharic renders with proper glyph shapes. */
-const notoEthiopic = Noto_Sans_Ethiopic({
-  variable: "--font-ethiopic",
-  subsets: ["ethiopic"],
 });
 
 const siteUrl = process.env.SITE_URL ?? "http://localhost:3000";
@@ -90,7 +84,7 @@ export default async function RootLayout({
       /* The theme boot script writes accent variables onto <html> before
          hydration — the mismatch is intentional and harmless. */
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${notoEthiopic.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-canvas text-content">
         {/* Applies the stored accent theme before first paint (no flash). */}

@@ -307,6 +307,7 @@ export const or: Dictionary = {
       messages: "Ergaalee",
       media: "Mediyaa",
       settings: "Qindaa'ina",
+      statistics: "Statistiikka",
     },
     login: {
       title: "Daayitaa seenuu",
@@ -592,6 +593,11 @@ export const or: Dictionary = {
       tagPlaceholder: "Dhaqqabi, booda Enter",
       chooseFile: "Tokko fayilii filadhu.",
       saved: "Qabsiamee jira.",
+    },
+    statistics: {
+      title: "Statistics",
+      description: "Manage statistics cards shown on the home page.",
+      emptyTitle: "No statistics yet.",
     },
   },
 };
