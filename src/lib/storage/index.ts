@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile, readFile, unlink } from "node:fs/promises";
-import { join, extname } from "node:path";
+import { isAbsolute, join, extname, relative, resolve, sep } from "node:path";
 import { v2 as cloudinary } from "cloudinary";
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./public/uploads";
@@ -94,6 +94,52 @@ function uploadImageToCloudinary(
   });
 }
 
+function cloudinaryConfigured(): boolean {
+  const cloudinaryUrl = process.env.CLOUDINARY_URL;
+  if (!cloudinaryUrl) return false;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(cloudinaryUrl);
+  } catch {
+    throw new Error("CLOUDINARY_URL must be a valid Cloudinary URL.");
+  }
+
+  if (
+    parsed.protocol !== "cloudinary:" ||
+    !parsed.username ||
+    !parsed.password ||
+    !parsed.hostname ||
+    cloudinaryUrl.includes("*")
+  ) {
+    throw new Error(
+      "CLOUDINARY_URL is incomplete or masked. Set the full Cloudinary API URL in the server environment."
+    );
+  }
+
+  return true;
+}
+
+function diskPath(storageKey: string): string {
+  return resolve(storageKey.replace(/[\\/]/g, sep));
+}
+
+function isPublicUploadPath(storageKey: string): boolean {
+  const pathFromUploadDir = relative(resolve(UPLOAD_DIR), diskPath(storageKey));
+  return (
+    pathFromUploadDir !== "" &&
+    pathFromUploadDir !== ".." &&
+    !pathFromUploadDir.startsWith(`..${sep}`) &&
+    !isAbsolute(pathFromUploadDir)
+  );
+}
+
+function errorCode(error: unknown): string | undefined {
+  if (!(error instanceof Error)) return undefined;
+  const code = (error as NodeJS.ErrnoException).code;
+  return typeof code === "string" ? code : undefined;
+}
+
 /** Persist public images to Cloudinary when configured; keep private files local. */
 export async function saveUpload(
   file: File,
@@ -103,7 +149,7 @@ export async function saveUpload(
   const fileName = safeName(file.name, file.type);
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  if (options.isPublic && options.kind === "image" && process.env.CLOUDINARY_URL) {
+  if (options.isPublic && options.kind === "image" && cloudinaryConfigured()) {
     const uploaded = await uploadImageToCloudinary(buffer, fileName);
     return {
       storageKey: `cloudinary:${uploaded.publicId}`,
@@ -113,6 +159,17 @@ export async function saveUpload(
       size: file.size,
       publicUrl: uploaded.secureUrl,
     };
+  }
+
+  if (process.env.VERCEL === "1") {
+    if (options.isPublic && options.kind === "image") {
+      throw new Error(
+        "Public image uploads on Vercel require CLOUDINARY_URL. Add it to the Vercel project's server environment variables, then redeploy."
+      );
+    }
+    throw new Error(
+      "Private uploads require persistent storage, which is not available on Vercel's read-only filesystem."
+    );
   }
 
   const dir = options.isPublic ? UPLOAD_DIR : PRIVATE_DIR;
@@ -136,7 +193,7 @@ export function publicUrlFor(fileName: string): string {
 
 /** Read a file from disk (for protected downloads). */
 export async function readUpload(storageKey: string): Promise<Buffer> {
-  return readFile(storageKey);
+  return readFile(diskPath(storageKey));
 }
 
 /** Delete a file from disk; ignores missing files. */
@@ -155,11 +212,17 @@ export async function deleteUpload(storageKey: string): Promise<void> {
     return;
   }
 
+  if (process.env.VERCEL === "1" && isPublicUploadPath(storageKey)) {
+    return;
+  }
+
   try {
-    await unlink(storageKey);
+    await unlink(diskPath(storageKey));
   } catch (err: unknown) {
-    if (err instanceof Error && "code" in err && (err as NodeJS.ErrnoException).code !== "ENOENT") {
-      throw err;
-    }
+    const code = errorCode(err);
+    if (code === "ENOENT") return;
+    // Static assets in a serverless deployment are immutable, but the media row can still be removed.
+    if (code === "EROFS" && isPublicUploadPath(storageKey)) return;
+    throw err;
   }
 }

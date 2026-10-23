@@ -2,7 +2,7 @@
 
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Select, Input } from "@/components/ui/field";
+import { Select } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +61,11 @@ export function MediaManager({ media }: { media: MediaItem[] }) {
     start(async () => {
       const res = await uploadMedia(fd);
       if (res.error) {
-        setError(res.error);
+        setError(
+          res.error === "errors.uploadFailed"
+            ? t("errors.uploadFailed")
+            : res.error
+        );
         return;
       }
       if (fileRef.current) fileRef.current.value = "";

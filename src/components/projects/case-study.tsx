@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { Card } from "@/components/ui/card";
 import { ProjectCard } from "./project-card";
 import { getI18n } from "@/lib/i18n/server";
 import type { ProjectWithDetails, ProjectWithThumbnail } from "@/lib/queries";
