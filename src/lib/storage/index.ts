@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile, readFile, unlink } from "node:fs/promises";
 import { join, extname } from "node:path";
+import { v2 as cloudinary } from "cloudinary";
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR ?? "./public/uploads";
 const PRIVATE_DIR = process.env.PRIVATE_UPLOAD_DIR ?? "./private";
@@ -24,6 +25,7 @@ export interface SavedFile {
   originalName: string;
   mimeType: string;
   size: number;
+  publicUrl?: string;
 }
 
 export function assertUploadable(file: File, kind: UploadKind): void {
@@ -66,17 +68,56 @@ function safeName(original: string, mimeType: string): string {
   return `${Date.now()}-${randomUUID().slice(0, 8)}${ext.toLowerCase()}`;
 }
 
-/** Persist an uploaded file to local disk. */
+function uploadImageToCloudinary(
+  buffer: Buffer,
+  fileName: string
+): Promise<{ publicId: string; secureUrl: string }> {
+  return new Promise((resolve, reject) => {
+    const upload = cloudinary.uploader.upload_stream(
+      {
+        folder: "mukti-portfolio",
+        public_id: fileName.replace(/\.[^.]+$/, ""),
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else if (!result) {
+          reject(new Error("Cloudinary returned no upload result."));
+        } else {
+          resolve({ publicId: result.public_id, secureUrl: result.secure_url });
+        }
+      }
+    );
+    upload.on("error", reject);
+    upload.end(buffer);
+  });
+}
+
+/** Persist public images to Cloudinary when configured; keep private files local. */
 export async function saveUpload(
   file: File,
   options: { isPublic: boolean; kind: UploadKind }
 ): Promise<SavedFile> {
   assertUploadable(file, options.kind);
   const fileName = safeName(file.name, file.type);
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (options.isPublic && options.kind === "image" && process.env.CLOUDINARY_URL) {
+    const uploaded = await uploadImageToCloudinary(buffer, fileName);
+    return {
+      storageKey: `cloudinary:${uploaded.publicId}`,
+      fileName,
+      originalName: file.name,
+      mimeType: file.type,
+      size: file.size,
+      publicUrl: uploaded.secureUrl,
+    };
+  }
+
   const dir = options.isPublic ? UPLOAD_DIR : PRIVATE_DIR;
   await mkdir(dir, { recursive: true });
   const storageKey = join(dir, fileName);
-  const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(storageKey, buffer);
   return {
     storageKey,
@@ -84,6 +125,7 @@ export async function saveUpload(
     originalName: file.name,
     mimeType: file.type,
     size: file.size,
+    publicUrl: options.isPublic ? publicUrlFor(fileName) : undefined,
   };
 }
 
@@ -99,6 +141,20 @@ export async function readUpload(storageKey: string): Promise<Buffer> {
 
 /** Delete a file from disk; ignores missing files. */
 export async function deleteUpload(storageKey: string): Promise<void> {
+  if (storageKey.startsWith("cloudinary:")) {
+    const publicId = storageKey.slice("cloudinary:".length);
+    if (!publicId) {
+      throw new Error("Invalid Cloudinary storage key.");
+    }
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
+    });
+    if (result.result !== "ok" && result.result !== "not found") {
+      throw new Error("Cloudinary asset deletion failed.");
+    }
+    return;
+  }
+
   try {
     await unlink(storageKey);
   } catch (err: unknown) {

@@ -25,7 +25,7 @@ A production-ready personal portfolio website with a full private admin dashboar
 - **Services** — manage what you offer with icon and description
 - **Profile** — all hero/about copy, bio, links (GitHub, LinkedIn, etc.), CV file, profile photo, availability toggle
 - **Site Settings** — site title, meta description, footer, social links, contact email, theme accent, CV visibility, social image
-- **Media Library** — upload images (JPEG, PNG, WebP, AVIF, GIF, SVG) and PDFs, delete, copy URL; public files served from `/uploads/`, private files via authenticated API route
+- **Media Library** — upload images (JPEG, PNG, WebP, AVIF, GIF, SVG) and PDFs, delete, copy URL; public images use Cloudinary when configured (otherwise `/uploads/`), private files via authenticated API route
 - **Messages (Inbox)** — view, filter, mark read/unread, reply, delete contact form submissions
 - **Admin auth** — JWT sessions stored in HttpOnly cookies, 7-day TTL, proxy-layer optimistic redirect, server-side `requireAdmin()` guard on every action
 
@@ -144,6 +144,7 @@ Edit `.env` and set:
 | `SITE_URL` | Canonical URL (e.g. `https://mukti.dev`) |
 | `ADMIN_EMAIL` | Your admin email address |
 | `ADMIN_INITIAL_PASSWORD` | Initial admin password (change after first login) |
+| `CLOUDINARY_URL` | *(Optional)* Cloudinary URL for public image uploads; keep the API secret server-side |
 | `RESEND_API_KEY` | *(Optional)* Resend key for contact email notifications |
 | `CONTACT_NOTIFY_EMAIL` | *(Optional)* Where contact notifications are sent |
 
@@ -262,7 +263,7 @@ npm run db:migrate
 ```
 
 ### File storage
-The default local disk storage works for a single-server deployment. For multi-instance or serverless deployments, replace `src/lib/storage/index.ts` with an S3/R2/Cloudflare storage adapter.
+When `CLOUDINARY_URL` is set, public image uploads are stored in Cloudinary; PDFs and private uploads remain on local disk behind the protected media route. Without Cloudinary, public images are stored under `./public/uploads/`. Private files need persistent storage in production.
 
 ### Build
 ```bash

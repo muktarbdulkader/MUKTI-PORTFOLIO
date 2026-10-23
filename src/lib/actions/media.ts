@@ -43,7 +43,8 @@ export async function uploadMedia(formData: FormData): Promise<MediaResult> {
   const category = (VALID_CATEGORIES as readonly string[]).includes(categoryRaw)
     ? (categoryRaw as (typeof VALID_CATEGORIES)[number])
     : "MISC";
-  const isPublic = String(formData.get("isPublic") ?? "true") !== "false";
+  const isPublic =
+    category !== "CV" && String(formData.get("isPublic") ?? "true") !== "false";
   const kind: UploadKind = category === "CV" ? "document" : "image";
 
   try {
@@ -51,7 +52,9 @@ export async function uploadMedia(formData: FormData): Promise<MediaResult> {
     const media = await prisma.media.create({
       data: {
         storageKey: saved.storageKey,
-        url: isPublic ? publicUrlFor(saved.fileName) : "/api/media/private/",
+        url: isPublic
+          ? saved.publicUrl ?? publicUrlFor(saved.fileName)
+          : "/api/media/private/",
         originalName: saved.originalName,
         mimeType: saved.mimeType,
         size: saved.size,

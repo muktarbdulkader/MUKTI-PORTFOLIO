@@ -13,7 +13,7 @@ to manage every image the site needs once it is live.
 | UI | React 19, Tailwind CSS v4, Framer Motion, lucide-react |
 | Data | PostgreSQL via Prisma 7 (`@prisma/adapter-pg`, raw SQL — no Prisma Accelerate needed) |
 | Auth | Hand-rolled JWT session cookie (`jose` + `bcryptjs`) — no third-party auth |
-| Files | **Local disk** — `public/uploads` (public images) and `private` (CV) |
+| Files | Cloudinary for public images when configured; local disk for private files/CVs and as a fallback |
 | Email | Optional — Resend (`RESEND_API_KEY`); without it, messages only land in the admin inbox |
 
 **You need:** a PostgreSQL database, a Node 20+ host, and a place for uploaded files that
@@ -35,6 +35,7 @@ Copy `.env.example` → `.env` and fill it in.
 | `UPLOAD_DIR` | optional | Default `./public/uploads`. Point at a mounted volume in production |
 | `PRIVATE_UPLOAD_DIR` | optional | Default `./private`. Must NOT be inside `public/` |
 | `MAX_UPLOAD_MB` | optional | Per-file limit, default `8` |
+| `CLOUDINARY_URL` | optional | Cloudinary API URL; public image uploads use it when set. Store it as a server-side secret |
 | `RESEND_API_KEY` | optional | Enables email delivery of contact messages |
 | `CONTACT_NOTIFY_EMAIL` | optional | Where contact notifications are sent |
 | `RATE_LIMIT_*` | optional | In-memory limiter, per-minute caps |
@@ -99,29 +100,23 @@ Run it under systemd or pm2 so it restarts on reboot/crash. Keep `UPLOAD_DIR` an
 
 ## 5. Deploy option C — Vercel
 
-Works out of the box for the code, with **one caveat about images**.
+Set `CLOUDINARY_URL` in Vercel's environment variables to persist public image uploads. Private uploads (including CVs) still use local disk and are not durable on serverless deployments.
 
 1. Push the repo to GitHub and import it on Vercel.
-2. Add the env vars from §2 (`DATABASE_URL` → Vercel Postgres / Neon / Supabase / Railway).
+2. Add the env vars from §2 (`DATABASE_URL` → Vercel Postgres / Neon / Supabase / Railway, and `CLOUDINARY_URL` as a Secret).
 3. Build command `npm run build`, install `npm ci`.
 4. Add a **build step or release command**: `npx prisma migrate deploy`.
 5. Seed once from your machine: `DATABASE_URL=… npx prisma migrate deploy && npm run db:seed`.
 
-### ⚠️ The image caveat on serverless
+### ⚠️ Private-file caveat on serverless
 
-Uploads are written to the local filesystem (`src/lib/storage/index.ts`). On Vercel that
-filesystem is **read-only and wiped on every redeploy**, so images uploaded through the
-admin would disappear. Pick one:
+Public images are stored on Cloudinary when configured. Private uploads are written to
+the local filesystem (`src/lib/storage/index.ts`), which is **read-only and wiped on every
+redeploy** on Vercel. Use persistent private object storage for CV uploads, or deploy on a
+host with persistent storage.
 
-* **A. Object storage (recommended for Vercel).** Point the storage layer at S3 / R2 /
-  Spaces. All file logic is isolated in `src/lib/storage/index.ts`
-  (`saveUpload`, `readUpload`, `deleteUpload`, `publicUrlFor`) plus
-  `src/app/api/media/private/[id]/route.ts` — swap those two files and the rest of the
-  app keeps working unchanged.
-* **B. Bake the images into the build.** Files already inside `public/uploads` are served
-  statically at build time. Copy your images there and commit them with
-  `git add -f public/uploads`. New admin uploads still won't persist.
-* **C. Use Docker/option A instead** — one volume, no code changes.
+The local fallback for public images also requires persistent storage. Docker/option A
+provides persistent local volumes without changing the storage configuration.
 
 ---
 
@@ -155,7 +150,8 @@ Every image on the site is managed from **Admin → Media**. Nothing is hard-cod
 Allowed types are enforced server-side (`src/lib/storage/index.ts`): **JPEG, PNG, WebP,
 AVIF, GIF, SVG** for images and **PDF** for documents. Max size = `MAX_UPLOAD_MB`
 (default 8 MB). Files are renamed to a timestamp + random id, so never rely on the
-original filename.
+original filename. Public images use Cloudinary if `CLOUDINARY_URL` is configured;
+private images and PDFs remain local.
 
 ### 6.3 Where each image gets attached
 
