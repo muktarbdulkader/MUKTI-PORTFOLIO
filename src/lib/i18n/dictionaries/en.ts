@@ -49,8 +49,8 @@ export const en = {
     available: "Available for new projects",
     openToWork: "Open to work",
     fullStack: "Full-Stack Dev",
-    headlineLead: "Building Products",
-    headlineAccent: "People Love",
+    headlineLead: "Crafting Clean Code,",
+    headlineAccent: "Shipping Great Products",
     description:
       "Full-stack engineer crafting fast, beautiful web & mobile products that solve real-world problems.",
     exploreWork: "Explore My Work",

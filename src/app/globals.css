@@ -4,33 +4,32 @@
 
 @theme {
   /* ── Core Palette ─────────────────────────────────────────────── */
-  --color-canvas:         #08090D;
-  --color-surface:        #11131A;
-  --color-elevated:       #1A1D27;
-  --color-overlay:        #20233080;
+  --color-canvas:         #000000;
+  --color-surface:        #0a0a0a;
+  --color-elevated:       #111111;
+  --color-overlay:        #1a1a1a80;
 
   /* ── Text ─────────────────────────────────────────────────────── */
-  --color-content:        #F5F5F7;
-  --color-muted:          #A1A6B5;
-  --color-faint:          #5A5F72;
+  --color-content:        #FFFFFF;
+  --color-muted:          #A0A0A0;
+  --color-faint:          #555555;
 
-  /* ── Accent ───────────────────────────────────────────────────── */
-  /* The accent values are re-written at runtime by the theme switcher. */
-  --color-accent:         #8B5CF6;
-  --color-accent-hover:   #7C3AED;
-  --color-accent-2:       #55B8FF;
-  --accent-rgb:           139 92 246;
-  --accent-2-rgb:         85 184 255;
-  --accent-glow:          #8B5CF6;
-  --color-blue:           #55B8FF;
-  --color-emerald:        #10B981;
+  /* ── Accent (white / light-gray only) ─────────────────────────── */
+  --color-accent:         #FFFFFF;
+  --color-accent-hover:   #E0E0E0;
+  --color-accent-2:       #C0C0C0;
+  --accent-rgb:           255 255 255;
+  --accent-2-rgb:         192 192 192;
+  --accent-glow:          #FFFFFF;
+  --color-blue:           #C0C0C0;
+  --color-emerald:        #B0B0B0;
 
-  /* ── Violet (alias for gradient) ──────────────────────────────── */
-  --color-violet:         #A78BFA;
+  /* ── Violet → neutral gray ─────────────────────────────────────── */
+  --color-violet:         #D0D0D0;
 
   /* ── Borders ──────────────────────────────────────────────────── */
-  --color-border-subtle:  #1E2130;
-  --color-border:         #2A2E42;
+  --color-border-subtle:  #1E1E1E;
+  --color-border:         #2E2E2E;
 
   /* ── Fonts ────────────────────────────────────────────────────── */
   --font-sans: "Noto Sans Ethiopic", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -63,12 +62,12 @@ body {
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--color-accent) 30%, transparent);
-  color: var(--color-content);
+  background: rgba(255,255,255,0.18);
+  color: #FFFFFF;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid rgba(255,255,255,0.7);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -121,21 +120,21 @@ body {
 
 /* Gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #888888 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Animated gradient text (slow shine sweep) */
+/* Animated gradient text (slow shine sweep) — pure white shimmer */
 .text-shine {
   background: linear-gradient(
     100deg,
-    var(--color-accent) 0%,
-    var(--color-accent-2) 28%,
-    #ffffff 46%,
-    var(--color-accent-2) 64%,
-    var(--color-accent) 100%
+    #888888 0%,
+    #CCCCCC 25%,
+    #FFFFFF 46%,
+    #CCCCCC 68%,
+    #888888 100%
   );
   background-size: 260% 100%;
   -webkit-background-clip: text;
@@ -145,7 +144,7 @@ body {
 }
 
 .text-gradient-warm {
-  background: linear-gradient(135deg, #A78BFA 0%, #60A5FA 50%, #34D399 100%);
+  background: linear-gradient(135deg, #FFFFFF 0%, #BBBBBB 50%, #777777 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -153,12 +152,12 @@ body {
 
 /* Glow utilities */
 .glow-accent {
-  box-shadow: 0 0 40px color-mix(in oklab, var(--color-accent) 25%, transparent),
-              0 0 80px color-mix(in oklab, var(--color-accent) 10%, transparent);
+  box-shadow: 0 0 40px rgba(255,255,255,0.12),
+              0 0 80px rgba(255,255,255,0.05);
 }
 
 .glow-blue {
-  box-shadow: 0 0 40px color-mix(in oklab, var(--color-blue) 20%, transparent);
+  box-shadow: 0 0 40px rgba(255,255,255,0.08);
 }
 
 /* Glass card */
@@ -218,7 +217,7 @@ body {
   transform: translateX(-50%);
   width: 80px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -274,6 +273,27 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+/* ── Water-flow / liquid motion for background SVG paths ── */
+@keyframes wave-drift {
+  0%, 100% { transform: translateX(0px);  }
+  50%       { transform: translateX(-28px); }
+}
+
+@keyframes wave-drift-alt {
+  0%, 100% { transform: translateX(0px); }
+  50%       { transform: translateX(22px); }
+}
+
+@keyframes liquid-rise {
+  0%, 100% { transform: translateY(0px) scaleX(1); }
+  33%       { transform: translateY(-10px) scaleX(1.015); }
+  66%       { transform: translateY(6px) scaleX(0.99); }
+}
+
+.animate-wave      { animation: wave-drift     10s ease-in-out infinite; }
+.animate-wave-alt  { animation: wave-drift-alt 13s ease-in-out infinite; }
+.animate-liquid    { animation: liquid-rise     8s ease-in-out infinite; }
+
 /* Ambient aurora blobs behind a section */
 .aurora {
   position: absolute;
@@ -290,17 +310,17 @@ body {
 }
 
 .aurora-blob-a {
-  background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.42), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255, 0.20), transparent 70%);
   animation: aurora-drift 22s ease-in-out infinite;
 }
 
 .aurora-blob-b {
-  background: radial-gradient(circle, rgb(var(--accent-2-rgb) / 0.34), transparent 70%);
+  background: radial-gradient(circle, rgba(180,180,180, 0.12), transparent 70%);
   animation: aurora-drift-alt 28s ease-in-out infinite;
 }
 
 .aurora-blob-c {
-  background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.24), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255, 0.10), transparent 70%);
   animation: aurora-drift 34s ease-in-out infinite reverse;
 }
 
@@ -336,7 +356,7 @@ body {
   border-radius: inherit;
   background: radial-gradient(
     320px circle at var(--mx, 50%) var(--my, 50%),
-    rgb(var(--accent-rgb) / 0.16),
+    rgba(255,255,255,0.08),
     transparent 62%
   );
   opacity: 0;
@@ -363,8 +383,8 @@ body {
   background: conic-gradient(
     from var(--angle),
     transparent 0%,
-    var(--color-accent) 18%,
-    var(--color-accent-2) 32%,
+    rgba(255,255,255,0.7) 18%,
+    rgba(180,180,180,0.5) 32%,
     transparent 52%,
     transparent 100%
   );
@@ -392,8 +412,8 @@ body {
   border-radius: inherit;
   background: linear-gradient(
     120deg,
-    rgb(var(--accent-rgb) / 0.8),
-    rgb(var(--accent-2-rgb) / 0.55),
+    rgba(255,255,255,0.5),
+    rgba(180,180,180,0.3),
     transparent 45%
   );
   background-size: 200% 200%;
@@ -432,14 +452,14 @@ body {
 /* Gentle float for decorative shapes */
 .animate-float-slow { animation: float-slow 9s ease-in-out infinite; }
 
-/* Hairline divider with a flowing accent */
+/* Hairline divider with a flowing white shimmer */
 .flow-line {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--accent-rgb) / 0.6),
-    rgb(var(--accent-2-rgb) / 0.5),
+    rgba(255,255,255,0.45),
+    rgba(200,200,200,0.35),
     transparent
   );
   background-size: 200% 100%;
@@ -476,9 +496,9 @@ html.theme-transition *::after {
 .card-lift:hover {
   transform: translateY(-6px);
   box-shadow:
-    0 24px 60px rgb(var(--accent-rgb) / 0.16),
-    0 8px 24px rgb(0 0 0 / 0.4);
-  border-color: rgb(var(--accent-rgb) / 0.35);
+    0 24px 60px rgba(255,255,255,0.06),
+    0 8px 24px rgb(0 0 0 / 0.5);
+  border-color: rgba(255,255,255,0.2);
 }
 
 /* Preserve focus visibility on dark surfaces */

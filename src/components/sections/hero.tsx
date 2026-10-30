@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { buttonVariants } from "@/components/ui/button";
@@ -21,101 +20,120 @@ function item(delay = 0) {
   };
 }
 
-/* ── Animated hero orb ────────────────────────────────────────── */
-function HeroOrb({
-  avatar,
+/* ── Animated hero graphic tech core ──────────────────────────── */
+function HeroGraphicCore({
   openToWork,
   fullStack,
 }: {
-  avatar?: { url: string; name: string } | null;
   openToWork: string;
   fullStack: string;
 }) {
   return (
-    <div className="relative mx-auto flex h-[290px] w-[290px] items-center justify-center sm:h-[380px] sm:w-[380px] lg:h-[440px] lg:w-[440px]">
-      {/* Outer atmosphere */}
+    <div className="relative mx-auto flex h-[310px] w-[310px] items-center justify-center sm:h-[400px] sm:w-[400px] lg:h-[460px] lg:w-[460px]">
+      {/* Outer atmosphere glow */}
       <div
         className="animate-pulse-glow pointer-events-none absolute inset-0 rounded-full"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgb(var(--accent-rgb) / 0.22) 0%, rgb(var(--accent-2-rgb) / 0.12) 50%, transparent 70%)",
+            "radial-gradient(ellipse at center, rgb(var(--accent-rgb) / 0.25) 0%, rgb(var(--accent-2-rgb) / 0.15) 50%, transparent 72%)",
         }}
         aria-hidden="true"
       />
 
-      {/* Spinning ring 1 */}
+      {/* Spinning ring 1 (Outer HUD Ring with dashed border) */}
       <motion.div
-        className="absolute inset-[7%] rounded-full border border-accent/20"
+        className="absolute inset-[4%] rounded-full border border-dashed border-accent/25"
         animate={{ rotate: 360 }}
-        transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
         aria-hidden="true"
       >
-        {/* Orbiting dot */}
-        <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_12px_4px_rgb(var(--accent-rgb)/0.6)]" />
+        {/* Orbiting energy beacon */}
+        <span className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_14px_5px_rgb(var(--accent-rgb)/0.8)]" />
       </motion.div>
 
-      {/* Spinning ring 2 (reverse, tilted) */}
+      {/* Spinning ring 2 (Reverse 3D tilted ring) */}
       <motion.div
-        className="absolute inset-[17%] rounded-full border border-accent-2/15"
-        style={{ transform: "rotateX(60deg)" }}
+        className="absolute inset-[14%] rounded-full border border-accent-2/20"
+        style={{ transform: "rotateX(62deg)" }}
         animate={{ rotate: -360 }}
-        transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         aria-hidden="true"
       >
-        <span className="absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-accent-2/80 shadow-[0_0_10px_3px_rgb(var(--accent-2-rgb)/0.5)]" />
+        <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-accent-2 shadow-[0_0_12px_4px_rgb(var(--accent-2-rgb)/0.7)]" />
       </motion.div>
 
-      {/* Spinning ring 3 */}
+      {/* Spinning ring 3 (Inner precision ring) */}
       <motion.div
-        className="absolute inset-[28%] rounded-full border border-violet/20"
+        className="absolute inset-[24%] rounded-full border border-violet/30"
         animate={{ rotate: 360 }}
-        transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
         aria-hidden="true"
       >
-        <span className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-violet/70 shadow-[0_0_8px_2px_rgba(167,139,250,0.5)]" />
+        <span className="absolute bottom-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-violet/90 shadow-[0_0_10px_3px_rgba(167,139,250,0.6)]" />
       </motion.div>
 
-      {/* Central avatar / initials */}
+      {/* ── Central High-Tech Developer Reactor Core (Pure Graphic Design) ── */}
       <motion.div
-        className="relative z-10 h-[150px] w-[150px] overflow-hidden rounded-full border-2 border-accent/30 shadow-[0_0_60px_rgb(var(--accent-rgb)/0.35)] sm:h-[180px] sm:w-[180px]"
+        className="relative z-10 flex h-[165px] w-[165px] flex-col items-center justify-center rounded-3xl border border-accent/40 bg-surface/90 shadow-[0_0_70px_rgb(var(--accent-rgb)/0.4)] backdrop-blur-2xl sm:h-[195px] sm:w-[195px]"
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/25 via-surface to-accent-2/25" />
-        {avatar ? (
-          <Image
-            src={avatar.url}
-            alt={avatar.name}
-            fill
-            sizes="180px"
-            className="object-cover"
-            priority
-          />        ) : (
-          <div className="flex h-full w-full items-center justify-center text-5xl font-bold text-gradient">
-            M
-          </div>
-        )}
+        {/* Animated aura frame */}
+        <div className="absolute -inset-0.5 -z-10 rounded-3xl bg-gradient-to-br from-accent/40 via-accent-2/30 to-violet/40 blur-sm" />
+
+        {/* Central reactor badge */}
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/40 bg-gradient-to-br from-accent/25 via-surface to-accent-2/20 shadow-[0_0_26px_rgb(var(--accent-rgb)/0.55)] sm:h-20 sm:w-20">
+          <Icon name="Code2" className="h-8 w-8 text-accent animate-pulse sm:h-9 sm:w-9" />
+          <span className="absolute -inset-1 rounded-2xl border border-dashed border-accent-2/35 animate-spin-slow" />
+        </div>
+
+        <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-wider text-content">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span>&lt;FULL-STACK /&gt;</span>
+        </div>
+        <div className="mt-0.5 text-[10px] font-medium text-accent-2/80">
+          Software Engineer
+        </div>
       </motion.div>
 
-      {/* Floating badge: "Available" */}
+      {/* Floating badge: "Available for Projects" */}
       <motion.div
-        className="glass absolute -right-2 top-12 rounded-xl px-3 py-1.5 text-xs font-medium text-emerald-400 shadow-lg"
-        animate={{ y: [0, -4, 0] }}
+        className="glass absolute -right-3 top-8 rounded-xl border border-emerald-500/30 px-3.5 py-2 text-xs font-medium text-emerald-400 shadow-xl backdrop-blur-md"
+        animate={{ y: [0, -5, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         aria-hidden="true"
       >
-        <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(16,185,129,0.5)]" />
+        <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_3px_rgba(16,185,129,0.7)]" />
         {openToWork}
       </motion.div>
 
-      {/* Floating badge: "Full-Stack" */}
+      {/* Floating badge: "Full-Stack & Systems" */}
       <motion.div
-        className="glass absolute -left-4 bottom-16 rounded-xl px-3 py-1.5 text-xs font-medium text-accent-2/90 shadow-lg"
-        animate={{ y: [0, 4, 0] }}
+        className="glass absolute -left-5 bottom-12 rounded-xl border border-accent-2/30 px-3.5 py-2 text-xs font-medium text-accent-2 shadow-xl backdrop-blur-md"
+        animate={{ y: [0, 5, 0] }}
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
         aria-hidden="true"
       >
+        <span className="mr-1.5">⚡</span>
         {fullStack}
+      </motion.div>
+
+      {/* Floating micro-stack tag 1: Next.js + React */}
+      <motion.div
+        className="glass absolute right-2 bottom-8 hidden rounded-lg border border-border-subtle px-2.5 py-1 font-mono text-[10px] text-muted shadow-md sm:block"
+        animate={{ y: [0, -4, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+      >
+        <span className="text-accent font-semibold">Next.js 16</span> • TypeScript
+      </motion.div>
+
+      {/* Floating micro-stack tag 2: Cloud & DB */}
+      <motion.div
+        className="glass absolute left-3 top-10 hidden rounded-lg border border-border-subtle px-2.5 py-1 font-mono text-[10px] text-muted shadow-md sm:block"
+        animate={{ y: [0, 4, 0] }}
+        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      >
+        PostgreSQL • Prisma
       </motion.div>
 
       {/* Corner glow dots */}
@@ -133,14 +151,14 @@ function HeroOrb({
 
       {/* Orbital particles */}
       {[
-        { size: "h-1.5 w-1.5", top: "18%", left: "82%", delay: "0s" },
-        { size: "h-1 w-1", top: "68%", left: "12%", delay: "1.4s" },
-        { size: "h-1 w-1", top: "78%", left: "78%", delay: "2.6s" },
+        { size: "h-2 w-2", top: "18%", left: "82%", delay: "0s" },
+        { size: "h-1.5 w-1.5", top: "68%", left: "10%", delay: "1.4s" },
+        { size: "h-1.5 w-1.5", top: "82%", left: "74%", delay: "2.6s" },
       ].map((p) => (
         <span
           key={`${p.top}-${p.left}`}
           className={cn(
-            "animate-float-slow pointer-events-none absolute rounded-full bg-accent/60",
+            "animate-float-slow pointer-events-none absolute rounded-full bg-accent/70 shadow-[0_0_8px_rgb(var(--accent-rgb))]",
             p.size
           )}
           style={{ top: p.top, left: p.left, animationDelay: p.delay }}
@@ -169,9 +187,6 @@ export function Hero({
   const orbRotate = useTransform(scrollYProgress, [0, 1], [0, 7]);
 
   const cvAvailable = Boolean(profile.cvVisible && profile.cvFile);
-  const avatar = profile.profileImage
-    ? { url: profile.profileImage.url, name: profile.name }
-    : null;
 
   return (
     <section
@@ -216,21 +231,27 @@ export function Hero({
             {/* Headline */}
             <motion.h1
               {...item(0.1)}
-              className="text-4xl font-extrabold leading-[1.06] tracking-tight text-content sm:text-5xl lg:text-6xl xl:text-7xl"
+              className="max-w-xl text-[2.1rem] font-extrabold leading-[1.2] tracking-tight sm:text-[2.7rem] lg:text-[3rem] xl:text-[3.3rem]"
             >
-              {profile.heroHeadline ? (
-                <>
-                  {profile.heroHeadline.split(" ").slice(0, -2).join(" ")}{" "}
-                  <span className="text-shine">
-                    {profile.heroHeadline.split(" ").slice(-2).join(" ")}
-                  </span>
-                </>
-              ) : (
-                <>
-                  {t("hero.headlineLead")}{" "}
-                  <span className="text-shine">{t("hero.headlineAccent")}</span>
-                </>
-              )}
+              {(() => {
+                const headline = profile.heroHeadline?.trim();
+                if (headline) {
+                  const words = headline.split(/\s+/);
+                  const mid = Math.ceil(words.length / 2);
+                  return (
+                    <>
+                      <span className="block text-content/90">{words.slice(0, mid).join(" ")}</span>
+                      <span className="mt-0.5 block text-shine">{words.slice(mid).join(" ")}</span>
+                    </>
+                  );
+                }
+                return (
+                  <>
+                    <span className="block text-content/90">{t("hero.headlineLead")}</span>
+                    <span className="mt-0.5 block text-shine">{t("hero.headlineAccent")}</span>
+                  </>
+                );
+              })()}
             </motion.h1>
 
             {/* Description */}
@@ -323,7 +344,7 @@ export function Hero({
             </motion.div>
           </motion.div>
 
-          {/* ── Right: Orb ─────────────────────────── */}
+          {/* ── Right: Graphic Tech Core ─────────────────────────── */}
           <motion.div
             style={{ y: orbY, rotate: orbRotate }}
             className="flex items-center justify-center lg:col-span-5"
@@ -331,8 +352,7 @@ export function Hero({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.15 }}
           >
-            <HeroOrb
-              avatar={avatar}
+            <HeroGraphicCore
               openToWork={t("hero.openToWork")}
               fullStack={t("hero.fullStack")}
             />

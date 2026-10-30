@@ -18,6 +18,7 @@ import { ExperienceSection } from "@/components/sections/experience";
 import { Services } from "@/components/sections/services";
 import { Statistics } from "@/components/sections/statistics";
 import { ContactCTA } from "@/components/sections/contact-cta";
+import { HomeGraphicBackground } from "@/components/ui/home-graphic-background";
 
 async function HomeContent() {
   await connection();
@@ -31,7 +32,10 @@ async function HomeContent() {
   ]);
 
   return (
-    <>
+    <div className="relative">
+      {/* ── Best-in-class Graphic Design Background System ── */}
+      <HomeGraphicBackground />
+
       <Hero profile={profile} />
       <About profile={profile} />
       <Statistics stats={stats} />
@@ -40,7 +44,7 @@ async function HomeContent() {
       <ExperienceSection items={experience} />
       <Services services={services} />
       <ContactCTA />
-    </>
+    </div>
   );
 }
 

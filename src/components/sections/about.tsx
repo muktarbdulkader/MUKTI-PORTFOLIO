@@ -47,48 +47,81 @@ export async function About({
       />
       <Container className="relative py-24">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
-          {/* ── Left: Image ─────────────────────────── */}
+          {/* ── Left: The Solo Featured Photo (Exclusive to About Me) ── */}
           <SlideIn direction="left" className="flex justify-center lg:col-span-5 lg:justify-start">
-            <div className="relative">
-              {/* Orbiting rings behind the portrait */}
+            <div className="group relative">
+              {/* Outer atmospheric aura */}
               <div
                 className="pointer-events-none absolute -inset-10 -z-10"
                 aria-hidden="true"
               >
-                <span className="animate-spin-slow absolute inset-0 rounded-full border border-dashed border-accent/15" />
-                <span className="animate-spin-reverse absolute inset-6 rounded-full border border-dashed border-accent-2/12" />
-                <span className="absolute inset-12 rounded-full bg-accent/10 blur-3xl" />
+                <span className="animate-spin-slow absolute inset-0 rounded-full border border-dashed border-accent/20" />
+                <span className="animate-spin-reverse absolute inset-6 rounded-full border border-dashed border-accent-2/15" />
+                <span className="absolute inset-10 rounded-full bg-accent/15 blur-3xl" />
               </div>
 
-              {/* Decorative corner line art */}
+              {/* High-tech precision HUD corner brackets */}
               <div
-                className="pointer-events-none absolute -left-4 -top-4 h-24 w-24 rounded-tl-2xl border-l-2 border-t-2 border-accent/30"
+                className="pointer-events-none absolute -left-3 -top-3 h-10 w-10 rounded-tl-xl border-l-2 border-t-2 border-accent shadow-[0_0_12px_rgb(var(--accent-rgb))]"
                 aria-hidden="true"
               />
               <div
-                className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-b-2 border-r-2 border-accent-2/30"
+                className="pointer-events-none absolute -right-3 -top-3 h-10 w-10 rounded-tr-xl border-r-2 border-t-2 border-accent-2 shadow-[0_0_12px_rgb(var(--accent-2-rgb))]"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute -bottom-3 -left-3 h-10 w-10 rounded-bl-xl border-b-2 border-l-2 border-accent-2 shadow-[0_0_12px_rgb(var(--accent-2-rgb))]"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute -bottom-3 -right-3 h-10 w-10 rounded-br-xl border-b-2 border-r-2 border-accent shadow-[0_0_12px_rgb(var(--accent-rgb))]"
                 aria-hidden="true"
               />
 
-              <div className="aspect-[4/5] w-full max-w-[340px] overflow-hidden rounded-2xl border border-border bg-elevated shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              {/* Main portrait photo frame */}
+              <div className="relative aspect-[4/5] w-full max-w-[350px] overflow-hidden rounded-2xl border border-accent/30 bg-surface shadow-[0_25px_65px_rgba(0,0,0,0.65)] transition-all duration-500 group-hover:border-accent/60 group-hover:shadow-[0_30px_80px_rgb(var(--accent-rgb)/0.3)]">
                 {profile.profileImage ? (
-                  <Image
-                    src={profile.profileImage.url}
-                    alt={profile.name}
-                    width={340}
-                    height={425}
-                    className="h-full w-full object-cover"
-                  />
+                  <>
+                    <Image
+                      src={profile.profileImage.url}
+                      alt={profile.name}
+                      width={380}
+                      height={475}
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      priority
+                    />
+                    {/* Subtle bottom gradient shade */}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-canvas/90 via-canvas/30 to-transparent" />
+                  </>
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-accent/15 via-elevated to-accent-2/15">
-                    <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-accent/15">
-                      <span className="text-4xl font-bold text-gradient">
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-gradient-to-br from-accent/20 via-surface to-accent-2/15 p-6 text-center">
+                    <span className="flex h-24 w-24 items-center justify-center rounded-3xl border border-accent/35 bg-surface/80 shadow-[0_0_30px_rgb(var(--accent-rgb)/0.4)]">
+                      <span className="text-5xl font-extrabold text-gradient">
                         {profile.name?.[0] ?? "M"}
                       </span>
                     </span>
-                    <span className="text-sm font-medium text-muted">{profile.name}</span>
+                    <div>
+                      <div className="text-base font-bold text-content">{profile.name}</div>
+                      <div className="text-xs text-accent-2 font-mono mt-1">&lt;Profile Photo&gt;</div>
+                    </div>
                   </div>
                 )}
+
+                {/* Status indicator badge pinned to the bottom of the photo */}
+                <div className="absolute inset-x-3 bottom-3 flex items-center justify-between rounded-xl border border-white/10 bg-canvas/80 px-3.5 py-2 backdrop-blur-md">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                    </span>
+                    <span className="text-xs font-semibold text-content">
+                      {profile.name || "Mukti"}
+                    </span>
+                  </div>
+                  <span className="font-mono text-[10px] text-accent-2 font-medium tracking-wide">
+                    ENGINEER
+                  </span>
+                </div>
               </div>
             </div>
           </SlideIn>
