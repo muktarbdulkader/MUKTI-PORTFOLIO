@@ -31,22 +31,80 @@ type Edge = {
   delay: number;
   packet?: { dur: number; begin: number; reverse?: boolean };
 };
-type Node = { id: string; x: number; y: number; major?: boolean; label?: string };
-type Tag = { id: string; x: number; y: number; text: string; begin: number; dur: number };
+type Node = {
+  id: string;
+  x: number;
+  y: number;
+  major?: boolean;
+  label?: string;
+};
+type Tag = {
+  id: string;
+  x: number;
+  y: number;
+  text: string;
+  begin: number;
+  dur: number;
+};
 
 /* ── Desktop layout (viewBox 1440 x 800) ───────────────────────── */
 const D_EDGES: Edge[] = [
-  { id: "d1", d: "M120 180 H220 L330 290", delay: 0.2, packet: { dur: 5, begin: 2 } },
-  { id: "d2", d: "M330 290 V390 L240 480 V520", delay: 0.5, packet: { dur: 6, begin: 1 } },
-  { id: "d3", d: "M240 520 V580 L300 640 H520", delay: 0.8, packet: { dur: 6, begin: 3.5, reverse: true } },
-  { id: "d4", d: "M1000 120 H1100 L1180 200 V260", delay: 0.4, packet: { dur: 5, begin: 0.5 } },
-  { id: "d5", d: "M1000 120 V60 H1380 V150", delay: 0.7, packet: { dur: 7, begin: 2, reverse: true } },
-  { id: "d6", d: "M1180 260 V330 L1250 400 H1320 V430", delay: 1, packet: { dur: 6, begin: 4 } },
-  { id: "d7", d: "M1180 260 V440 L1100 520 V560", delay: 1.1, packet: { dur: 7, begin: 2.5 } },
-  { id: "d8", d: "M1100 560 V620 L1040 680 H900", delay: 1.4, packet: { dur: 5.5, begin: 4, reverse: true } },
+  {
+    id: "d1",
+    d: "M120 180 H220 L330 290",
+    delay: 0.2,
+    packet: { dur: 5, begin: 2 },
+  },
+  {
+    id: "d2",
+    d: "M330 290 V390 L240 480 V520",
+    delay: 0.5,
+    packet: { dur: 6, begin: 1 },
+  },
+  {
+    id: "d3",
+    d: "M240 520 V580 L300 640 H520",
+    delay: 0.8,
+    packet: { dur: 6, begin: 3.5, reverse: true },
+  },
+  {
+    id: "d4",
+    d: "M1000 120 H1100 L1180 200 V260",
+    delay: 0.4,
+    packet: { dur: 5, begin: 0.5 },
+  },
+  {
+    id: "d5",
+    d: "M1000 120 V60 H1380 V150",
+    delay: 0.7,
+    packet: { dur: 7, begin: 2, reverse: true },
+  },
+  {
+    id: "d6",
+    d: "M1180 260 V330 L1250 400 H1320 V430",
+    delay: 1,
+    packet: { dur: 6, begin: 4 },
+  },
+  {
+    id: "d7",
+    d: "M1180 260 V440 L1100 520 V560",
+    delay: 1.1,
+    packet: { dur: 7, begin: 2.5 },
+  },
+  {
+    id: "d8",
+    d: "M1100 560 V620 L1040 680 H900",
+    delay: 1.4,
+    packet: { dur: 5.5, begin: 4, reverse: true },
+  },
   // new branches
   { id: "d9", d: "M120 180 V100 H260", delay: 0.9 },
-  { id: "d10", d: "M520 640 H600 L660 700 H760", delay: 1.2, packet: { dur: 5, begin: 5 } },
+  {
+    id: "d10",
+    d: "M520 640 H600 L660 700 H760",
+    delay: 1.2,
+    packet: { dur: 5, begin: 5 },
+  },
 ];
 
 const D_NODES: Node[] = [
@@ -72,10 +130,30 @@ const D_TAGS: Tag[] = [
 
 /* ── Phone layout (viewBox 400 x 800), kept inside x 30..370 ───── */
 const M_EDGES: Edge[] = [
-  { id: "m1", d: "M30 70 H80 L130 120 V230", delay: 0.2, packet: { dur: 5, begin: 0.8 } },
-  { id: "m2", d: "M130 230 V320 L70 380 V470", delay: 0.5, packet: { dur: 6, begin: 2, reverse: true } },
-  { id: "m3", d: "M70 470 V540 L120 590 H230 L290 650 V690", delay: 0.8, packet: { dur: 7, begin: 1.5 } },
-  { id: "m4", d: "M370 190 H350 L320 220 V360 L350 390 H370", delay: 1, packet: { dur: 6, begin: 3 } },
+  {
+    id: "m1",
+    d: "M30 70 H80 L130 120 V230",
+    delay: 0.2,
+    packet: { dur: 5, begin: 0.8 },
+  },
+  {
+    id: "m2",
+    d: "M130 230 V320 L70 380 V470",
+    delay: 0.5,
+    packet: { dur: 6, begin: 2, reverse: true },
+  },
+  {
+    id: "m3",
+    d: "M70 470 V540 L120 590 H230 L290 650 V690",
+    delay: 0.8,
+    packet: { dur: 7, begin: 1.5 },
+  },
+  {
+    id: "m4",
+    d: "M370 190 H350 L320 220 V360 L350 390 H370",
+    delay: 1,
+    packet: { dur: 6, begin: 3 },
+  },
   { id: "m5", d: "M290 690 H340 L370 720", delay: 1.3 },
   { id: "m6", d: "M70 470 H30", delay: 1.2 },
 ];
@@ -125,7 +203,7 @@ function Network({
     <svg
       className={className}
       viewBox={viewBox}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio={strong ? "xMidYMid meet" : "xMidYMid slice"}
       xmlns="http://www.w3.org/2000/svg"
     >
       {/* Lines: draw in once */}
@@ -134,7 +212,7 @@ function Network({
           key={e.id}
           d={e.d}
           fill="none"
-          stroke="currentColor"
+          stroke="rgb(201, 192, 192)"
           strokeOpacity={lineOpacity}
           strokeWidth={lineWidth}
           strokeLinejoin="round"
@@ -224,7 +302,11 @@ function Network({
               repeatCount: "indefinite" as const,
               path: e.d,
               ...(p.reverse
-                ? { keyPoints: "1;0", keyTimes: "0;1", calcMode: "linear" as const }
+                ? {
+                    keyPoints: "1;0",
+                    keyTimes: "0;1",
+                    calcMode: "linear" as const,
+                  }
                 : {}),
             };
             return (
@@ -292,7 +374,12 @@ export function HomeGraphicBackground() {
             "radial-gradient(circle, rgb(var(--accent-2-rgb) / 0.13) 0%, transparent 68%)",
         }}
         animate={reduce ? undefined : { x: [0, -28, 0], y: [0, 20, 0] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        transition={{
+          duration: 26,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
       />
 
       {/* 2. Fine dot grid, fading toward the edges (a bit stronger on phones) */}
@@ -308,7 +395,7 @@ export function HomeGraphicBackground() {
 
       {/* 3. The network: one layout for phones, one for wide screens */}
       <Network
-        className="absolute inset-0 h-full w-full md:hidden"
+        className="absolute inset-0 h-full w-full opacity-40 md:hidden"
         viewBox="0 0 400 800"
         edges={M_EDGES}
         nodes={M_NODES}

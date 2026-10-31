@@ -21,6 +21,9 @@ const NAV = [
   { key: "contact", href: "/contact" },
 ] as const;
 
+const FOCUS =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+
 export function SiteHeader() {
   const pathname = usePathname();
   const { t } = useI18n();
@@ -75,7 +78,7 @@ export function SiteHeader() {
       className={cn(
         "sticky top-0 z-40 transition-all duration-300",
         scrolled
-          ? "border-b border-border-subtle/70 bg-canvas/85 backdrop-blur-xl shadow-[0_1px_20px_rgba(0,0,0,0.3)]"
+          ? "border-b border-border-subtle/70 bg-canvas/85 backdrop-blur-xl shadow-[0_8px_32px_rgb(var(--accent-rgb)/0.08),0_1px_20px_rgba(0,0,0,0.25)]"
           : "border-b border-transparent bg-canvas/60 backdrop-blur-md"
       )}
     >
@@ -92,22 +95,29 @@ export function SiteHeader() {
           {/* Logo */}
           <Link
             href="/"
-            className="group flex items-center gap-2.5 text-base font-bold tracking-tight text-content"
+            className={cn(
+              "group flex items-center gap-2.5 rounded-lg text-base font-bold tracking-tight text-content",
+              FOCUS
+            )}
           >
-            <span className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent transition-all duration-300 group-hover:-rotate-6 group-hover:bg-accent/25 group-hover:shadow-[0_0_14px_rgb(var(--accent-rgb)/0.45)]">
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-accent/25 bg-accent/15 text-accent shadow-[0_0_14px_rgb(var(--accent-rgb)/0.2)] transition-all duration-300 group-hover:-rotate-6 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-[0_0_22px_rgb(var(--accent-rgb)/0.5)]">
               <Icon name="Sparkles" className="h-4 w-4" />
             </span>
             <span className="text-gradient">Mukti</span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 md:flex" aria-label={t("nav.primary")}>
+          <nav
+            className="hidden items-center gap-1 rounded-full border border-border-subtle/60 bg-surface/30 p-1 md:flex"
+            aria-label={t("nav.primary")}
+          >
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "group relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200",
+                  FOCUS,
                   isActive(item.href)
                     ? "text-content"
                     : "text-muted hover:text-content"
@@ -116,7 +126,7 @@ export function SiteHeader() {
                 {isActive(item.href) && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 rounded-full border border-border bg-elevated"
+                    className="absolute inset-0 rounded-full border border-accent/25 bg-elevated shadow-[0_0_18px_rgb(var(--accent-rgb)/0.18)]"
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                   />
                 )}
@@ -132,14 +142,17 @@ export function SiteHeader() {
           <div className="hidden items-center gap-2.5 md:flex">
             <ThemeSwitcher />
             <LanguageSwitcher />
-            <Link href="/contact" className="ml-1">
+            <Link href="/contact" className={cn("group/cta ml-1 rounded-lg", FOCUS)}>
               <Button
                 size="sm"
                 variant="primary"
-                className="shadow-[0_0_16px_rgb(var(--accent-rgb)/0.3)] transition-shadow duration-300 hover:shadow-[0_0_28px_rgb(var(--accent-rgb)/0.55)]"
+                className="shadow-[0_0_16px_rgb(var(--accent-rgb)/0.3)] transition-shadow duration-300 hover:shadow-[0_0_30px_rgb(var(--accent-rgb)/0.6)]"
               >
                 {t("nav.cta")}
-                <Icon name="ArrowRight" className="h-3.5 w-3.5" />
+                <Icon
+                  name="ArrowRight"
+                  className="h-3.5 w-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5"
+                />
               </Button>
             </Link>
           </div>
@@ -150,7 +163,11 @@ export function SiteHeader() {
             <LanguageSwitcher variant="compact" />
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-muted transition-colors hover:border-accent/30 hover:text-content"
+              className={cn(
+                "inline-flex h-10 w-10 items-center justify-center rounded-xl border bg-surface/40 text-muted transition-all duration-200 hover:border-accent/40 hover:text-content hover:shadow-[0_0_14px_rgb(var(--accent-rgb)/0.2)]",
+                open ? "border-accent/40 text-content" : "border-border",
+                FOCUS
+              )}
               aria-expanded={open}
               aria-controls="mobile-nav"
               aria-label={t("nav.toggleMenu")}
@@ -181,9 +198,18 @@ export function SiteHeader() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden border-t border-border-subtle/60 bg-canvas/95 backdrop-blur-xl md:hidden"
+            className="relative overflow-hidden border-t border-border-subtle/60 bg-canvas/95 backdrop-blur-xl md:hidden"
           >
-            <Container size="wide" className="py-4">
+            {/* Soft accent glow at the top of the panel */}
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-24"
+              style={{
+                background:
+                  "linear-gradient(to bottom, rgb(var(--accent-rgb)/0.08), transparent)",
+              }}
+              aria-hidden="true"
+            />
+            <Container size="wide" className="relative py-4">
               <nav className="flex flex-col gap-1" aria-label={t("nav.mobile")}>
                 {navItems.map((item, i) => (
                   <motion.div
@@ -195,19 +221,33 @@ export function SiteHeader() {
                     <Link
                       href={item.href}
                       className={cn(
-                        "block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
+                        "group/item flex items-center justify-between rounded-xl border px-4 py-3 text-sm font-medium transition-all duration-200",
+                        FOCUS,
                         isActive(item.href)
-                          ? "bg-accent/10 text-accent"
-                          : "text-muted hover:bg-elevated hover:text-content"
+                          ? "border-accent/25 bg-accent/10 text-accent shadow-[0_0_16px_rgb(var(--accent-rgb)/0.12)]"
+                          : "border-transparent text-muted hover:bg-elevated hover:text-content"
                       )}
                     >
-                      {item.label}
+                      <span className="flex items-center gap-2.5">
+                        {isActive(item.href) && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_rgb(var(--accent-rgb))]" />
+                        )}
+                        {item.label}
+                      </span>
+                      <Icon
+                        name="ArrowRight"
+                        className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover/item:translate-x-0 group-hover/item:opacity-60"
+                      />
                     </Link>
                   </motion.div>
                 ))}
                 <div className="mt-3 border-t border-border-subtle/50 pt-3">
-                  <Link href="/contact" className="block">
-                    <Button size="md" variant="primary" className="w-full">
+                  <Link href="/contact" className={cn("block rounded-lg", FOCUS)}>
+                    <Button
+                      size="md"
+                      variant="primary"
+                      className="w-full shadow-[0_0_20px_rgb(var(--accent-rgb)/0.3)]"
+                    >
                       {t("nav.cta")}
                       <Icon name="ArrowRight" className="h-4 w-4" />
                     </Button>
