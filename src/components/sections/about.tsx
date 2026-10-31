@@ -5,6 +5,8 @@ import { FadeUp, StaggerContainer, StaggerItem, SlideIn } from "@/components/ui/
 import { getI18n } from "@/lib/i18n/server";
 import type { Profile, Media } from "@/lib/queries";
 
+/* Same blocks, icons and colours as before. Each block now also carries
+   its own bubble / border / glow classes (written out in full for Tailwind). */
 const BLOCKS: Array<{
   key: keyof Pick<Profile, "interests" | "approach" | "learningGoals" | "ambitions" | "education">;
   label:
@@ -15,12 +17,61 @@ const BLOCKS: Array<{
     | "about.education";
   icon: string;
   color: string;
+  bubble: string;
+  border: string;
+  corner: string;
+  hover: string;
 }> = [
-  { key: "interests",     label: "about.interests",     icon: "Sparkles",      color: "text-violet" },
-  { key: "approach",      label: "about.approach",      icon: "Wrench",        color: "text-blue" },
-  { key: "learningGoals", label: "about.learningGoals", icon: "GraduationCap", color: "text-accent" },
-  { key: "ambitions",     label: "about.ambitions",     icon: "Star",          color: "text-emerald" },
-  { key: "education",     label: "about.education",     icon: "Briefcase",     color: "text-accent" },
+  {
+    key: "interests",
+    label: "about.interests",
+    icon: "Sparkles",
+    color: "text-violet",
+    bubble: "bg-violet/10",
+    border: "border-violet/20",
+    corner: "from-violet/15",
+    hover: "hover:border-violet/40 hover:shadow-[0_10px_40px_rgba(167,139,250,0.14)]",
+  },
+  {
+    key: "approach",
+    label: "about.approach",
+    icon: "Wrench",
+    color: "text-blue",
+    bubble: "bg-blue/10",
+    border: "border-blue/20",
+    corner: "from-blue/15",
+    hover: "hover:border-blue/40 hover:shadow-[0_10px_40px_rgb(var(--accent-2-rgb)/0.14)]",
+  },
+  {
+    key: "learningGoals",
+    label: "about.learningGoals",
+    icon: "GraduationCap",
+    color: "text-accent",
+    bubble: "bg-accent/10",
+    border: "border-accent/20",
+    corner: "from-accent/15",
+    hover: "hover:border-accent/40 hover:shadow-[0_10px_40px_rgb(var(--accent-rgb)/0.14)]",
+  },
+  {
+    key: "ambitions",
+    label: "about.ambitions",
+    icon: "Star",
+    color: "text-emerald",
+    bubble: "bg-emerald/10",
+    border: "border-emerald/20",
+    corner: "from-emerald/15",
+    hover: "hover:border-emerald/40 hover:shadow-[0_10px_40px_rgba(16,185,129,0.14)]",
+  },
+  {
+    key: "education",
+    label: "about.education",
+    icon: "Briefcase",
+    color: "text-accent",
+    bubble: "bg-accent/10",
+    border: "border-accent/20",
+    corner: "from-accent/15",
+    hover: "hover:border-accent/40 hover:shadow-[0_10px_40px_rgb(var(--accent-rgb)/0.14)]",
+  },
 ];
 
 export async function About({
@@ -39,12 +90,26 @@ export async function About({
 
   return (
     <section id="about" className="section-divider relative scroll-mt-20 overflow-hidden">
-      {/* Subtle radial glow */}
+      {/* Background glows (gradients only) */}
       <div
-        className="pointer-events-none absolute -right-40 top-0 h-[500px] w-[500px] rounded-full opacity-30"
-        style={{ background: "radial-gradient(circle, rgb(var(--accent-rgb)/0.12) 0%, transparent 70%)" }}
+        className="pointer-events-none absolute -right-40 top-0 h-[560px] w-[560px] rounded-full"
+        style={{ background: "radial-gradient(circle, rgb(var(--accent-rgb)/0.16) 0%, transparent 70%)" }}
         aria-hidden="true"
       />
+      <div
+        className="pointer-events-none absolute -left-32 bottom-0 h-[420px] w-[420px] rounded-full"
+        style={{ background: "radial-gradient(circle, rgb(var(--accent-2-rgb)/0.10) 0%, transparent 70%)" }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-grid opacity-[0.10]"
+        style={{
+          maskImage: "radial-gradient(ellipse 80% 60% at 50% 0%, black 10%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 60% at 50% 0%, black 10%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      />
+
       <Container className="relative py-24">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-20">
           {/* ── Left: The Solo Featured Photo (Exclusive to About Me) ── */}
@@ -129,34 +194,50 @@ export async function About({
           {/* ── Right: Content ──────────────────────── */}
           <div className="lg:col-span-7">
             <FadeUp>
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+              <span className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-accent">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
                 {t("about.eyebrow")}
               </span>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-content sm:text-4xl">
+              <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-content sm:text-4xl lg:text-5xl">
                 {t("about.titleLead")}{" "}
                 <span className="text-gradient">{profile.name || "Mukti"}</span>
               </h2>
               {hasBio && (
-                <p className="mt-5 max-w-lg text-base leading-8 text-muted">
+                <p className="mt-6 max-w-xl border-l-2 border-accent/40 pl-5 text-base leading-8 text-muted sm:text-lg sm:leading-9">
                   {profile.bio}
                 </p>
               )}
             </FadeUp>
 
             {blocks.length > 0 && (
-              <StaggerContainer className="mt-8 grid gap-4 sm:grid-cols-2" delay={0.1}>
+              <StaggerContainer className="mt-10 grid gap-4 sm:grid-cols-2" delay={0.1}>
                 {blocks.map((b) => (
                   <StaggerItem key={b.key}>
-                    <div className="glass card-lift rounded-xl p-5">
-                      <div className={`mb-3 flex items-center gap-2 ${b.color}`}>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-current/10">
+                    <div
+                      className={`glass card-lift group/block relative h-full overflow-hidden rounded-xl border ${b.border} ${b.hover} p-5 transition-[border-color,box-shadow] duration-300 sm:p-6`}
+                    >
+                      {/* Coloured top edge */}
+                      <div
+                        className={`absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-current to-transparent opacity-40 transition-opacity duration-300 group-hover/block:opacity-90 ${b.color}`}
+                        aria-hidden="true"
+                      />
+                      {/* Corner glow */}
+                      <div
+                        className={`pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-gradient-to-br ${b.corner} to-transparent opacity-60 transition-opacity duration-500 group-hover/block:opacity-100`}
+                        aria-hidden="true"
+                      />
+
+                      <div className={`relative mb-3 flex items-center gap-2.5 ${b.color}`}>
+                        <div
+                          className={`flex h-9 w-9 items-center justify-center rounded-lg border ${b.border} ${b.bubble}`}
+                        >
                           <Icon name={b.icon} className="h-4 w-4" />
                         </div>
                         <span className="text-xs font-semibold uppercase tracking-wide">
                           {t(b.label)}
                         </span>
                       </div>
-                      <p className="text-sm leading-6 text-muted">{profile[b.key] as string}</p>
+                      <p className="relative text-sm leading-6 text-muted">{profile[b.key] as string}</p>
                     </div>
                   </StaggerItem>
                 ))}
