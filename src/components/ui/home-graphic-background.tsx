@@ -395,7 +395,7 @@ export function HomeGraphicBackground() {
 
       {/* 3. The network: one layout for phones, one for wide screens */}
       <Network
-        className="absolute inset-0 h-full w-full opacity-40 md:hidden"
+        className="absolute inset-0 h-full w-full opacity-30 md:hidden"
         viewBox="0 0 400 800"
         edges={M_EDGES}
         nodes={M_NODES}
