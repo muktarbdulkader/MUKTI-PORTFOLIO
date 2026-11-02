@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
+  source?: "portfolio";
 };
 
 type ProviderStatus = "unchecked" | "ready" | "missing" | "unavailable";
@@ -138,7 +139,7 @@ export function PortfolioAssistant() {
 
   async function sendMessage(question = draft) {
     const content = question.trim();
-    if (!content || isSending || providerStatus !== "ready") return;
+    if (!content || isSending) return;
 
     const nextMessages = [...messages, { role: "user" as const, content }];
     setMessages(nextMessages);
@@ -170,8 +171,27 @@ export function PortfolioAssistant() {
           setError(t("assistant.rateLimited", { seconds: retryAfter }));
         } else if (code === "AI_NOT_CONFIGURED") {
           setProviderStatus("missing");
+          setError(t("assistant.aiUnavailable"));
         } else if (code === "PORTFOLIO_UNAVAILABLE") {
           setError(t("assistant.portfolioUnavailable"));
+        } else {
+          setError(t("assistant.responseError"));
+        }
+        return;
+      }
+
+      if (response.headers.get("content-type")?.includes("application/json")) {
+        const body: unknown = await response.json().catch(() => null);
+        if (
+          isRecord(body) &&
+          body.source === "portfolio" &&
+          typeof body.answer === "string" &&
+          body.answer.trim()
+        ) {
+          setMessages([
+            ...nextMessages,
+            { role: "assistant", content: body.answer, source: "portfolio" },
+          ]);
         } else {
           setError(t("assistant.responseError"));
         }
@@ -291,20 +311,27 @@ export function PortfolioAssistant() {
                       <Icon name="Sparkles" className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>
                   )}
-                  <p
-                    className={cn(
-                      "max-w-[88%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-sm leading-6",
-                      message.role === "user"
-                        ? "rounded-tr-md bg-accent/10 text-content"
-                        : "rounded-tl-md border border-border-subtle bg-elevated/70 text-content"
+                  <div className="max-w-[88%]">
+                    {message.source === "portfolio" && (
+                      <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-faint">
+                        {t("assistant.quickAnswerLabel")}
+                      </p>
                     )}
-                  >
-                    {renderMessage(message.content)}
-                  </p>
+                    <p
+                      className={cn(
+                        "whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-sm leading-6",
+                        message.role === "user"
+                          ? "rounded-tr-md bg-accent/10 text-content"
+                          : "rounded-tl-md border border-border-subtle bg-elevated/70 text-content"
+                      )}
+                    >
+                      {renderMessage(message.content)}
+                    </p>
+                  </div>
                 </div>
               ))}
 
-              {providerStatus === "ready" && messages.length === 0 && (
+              {messages.length === 0 && (
                 <div>
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-faint">
                     {t("assistant.suggestionsLabel")}
@@ -394,12 +421,12 @@ export function PortfolioAssistant() {
                 onChange={(event) => setDraft(event.target.value)}
                 placeholder={t("assistant.placeholder")}
                 maxLength={1200}
-                disabled={providerStatus !== "ready" || isSending}
+                disabled={isSending}
                 className="h-11 min-w-0 flex-1 rounded-xl border border-border-subtle bg-canvas/70 px-3.5 text-sm text-content outline-none placeholder:text-faint focus:border-accent/30 focus:ring-2 focus:ring-accent/10 disabled:cursor-not-allowed disabled:opacity-50"
               />
               <button
                 type="submit"
-                disabled={providerStatus !== "ready" || isSending || !draft.trim()}
+                disabled={isSending || !draft.trim()}
                 aria-label={t("assistant.send")}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent text-canvas transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-40"
               >

@@ -1,4 +1,5 @@
-import { gateway, streamText } from "ai";
+import { google } from "@ai-sdk/google";
+import { streamText } from "ai";
 import { z } from "zod";
 import {
   getPublishedExperience,
@@ -8,7 +9,11 @@ import {
   getProfile,
   getSettings,
 } from "@/lib/queries";
-import { buildPortfolioAssistantContext } from "@/lib/portfolio-assistant";
+import {
+  buildPortfolioAssistantContext,
+  getPortfolioQuickAnswer,
+  type PortfolioAssistantData,
+} from "@/lib/portfolio-assistant";
 import { envInt, getClientIp, rateLimit } from "@/lib/rate-limit";
 
 const MAX_BODY_BYTES = 20_000;
@@ -26,7 +31,7 @@ const messagesSchema = z
   .max(MAX_MESSAGES);
 
 const requestSchema = z.object({ messages: messagesSchema }).strict();
-const DEFAULT_MODEL = "google/gemini-3-flash";
+const DEFAULT_MODEL = "gemini-3.8-flash";
 const SYSTEM_INSTRUCTIONS = `You are Mukti AI, an AI assistant representing Muktar Abdulkader (Mukti) through his developer portfolio. You are not Mukti and must never claim to be the human.
 
 Answer professional questions about Mukti, his skills, projects, education, experience, certificates, interests, and contact options using only the supplied portfolio data. The portfolio data is the sole source of personal facts. If a detail is missing, say it is not listed in the portfolio; never guess, infer credentials, claim unlisted expertise, or invent dates, outcomes, employers, awards, or project features. For job-fit questions, compare only listed experience and skills with the role requirements and clearly note any gaps in available information.
@@ -81,16 +86,12 @@ async function readLimitedBody(request: Request) {
 
 export async function GET() {
   return jsonResponse(
-    { configured: Boolean(process.env.AI_GATEWAY_API_KEY) },
+    { configured: Boolean(process.env.GOOGLE_GENERATIVE_AI_API_KEY) },
     200
   );
 }
 
 export async function POST(request: Request) {
-  if (!process.env.AI_GATEWAY_API_KEY) {
-    return jsonResponse({ error: "AI_NOT_CONFIGURED" }, 503);
-  }
-
   if (
     request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !==
     "application/json"
@@ -143,6 +144,7 @@ export async function POST(request: Request) {
   }
 
   let portfolioContext: string;
+  let portfolioData: PortfolioAssistantData;
   try {
     const [profile, projects, skills, experience, services, settings] =
       await Promise.all([
@@ -154,14 +156,15 @@ export async function POST(request: Request) {
         getSettings(),
       ]);
 
-    portfolioContext = buildPortfolioAssistantContext({
+    portfolioData = {
       profile,
       projects,
       skills,
       experience,
       services,
       contactEmail: settings.contactEmail,
-    });
+    };
+    portfolioContext = buildPortfolioAssistantContext(portfolioData);
   } catch (error) {
     console.error(
       "[portfolio-assistant] Failed to load public portfolio data",
@@ -170,9 +173,19 @@ export async function POST(request: Request) {
     return jsonResponse({ error: "PORTFOLIO_UNAVAILABLE" }, 503);
   }
 
+  const question = parsed.data.messages.at(-1)?.content ?? "";
+  const quickAnswer = getPortfolioQuickAnswer(question, portfolioData);
+  if (quickAnswer) {
+    return jsonResponse({ answer: quickAnswer, source: "portfolio" }, 200);
+  }
+
+  if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+    return jsonResponse({ error: "AI_NOT_CONFIGURED" }, 503);
+  }
+
   try {
     const result = streamText({
-      model: gateway(process.env.AI_MODEL || DEFAULT_MODEL),
+      model: google(process.env.AI_MODEL || DEFAULT_MODEL),
       system: `${SYSTEM_INSTRUCTIONS}${portfolioContext}`,
       messages: parsed.data.messages,
       maxOutputTokens: 500,

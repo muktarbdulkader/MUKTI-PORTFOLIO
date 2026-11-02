@@ -60,6 +60,34 @@ export type PortfolioAssistantData = {
   contactEmail?: string | null;
 };
 
+type PortfolioAssistantContext = {
+  profile: {
+    name?: string;
+    title?: string;
+    introduction?: string;
+    interests?: string;
+    ambitions?: string;
+    educationSummary?: string;
+    contactEmail?: string;
+    github?: string;
+    linkedIn?: string;
+  };
+  projects: Array<{
+    title?: string;
+    portfolioPage: string;
+    source?: string;
+    liveDemo?: string;
+  }>;
+  publishedSkills: Array<{ name?: string; category?: string }>;
+  publishedExperienceEducationAndCertificates: Array<{
+    kind: string;
+    title?: string;
+    organization?: string;
+    startYear?: number;
+    endYear?: number | "Present";
+  }>;
+};
+
 function cleanText(value: string | null | undefined, maxLength = 1000) {
   const cleaned = value?.trim().slice(0, maxLength);
   return cleaned || undefined;
@@ -110,6 +138,82 @@ function year(date: Date | null | undefined) {
   return date instanceof Date && Number.isFinite(date.getTime())
     ? date.getFullYear()
     : undefined;
+}
+
+export function getPortfolioQuickAnswer(
+  question: string,
+  data: PortfolioAssistantData
+): string | undefined {
+  const query = question.toLowerCase();
+  const context = JSON.parse(
+    buildPortfolioAssistantContext(data)
+  ) as PortfolioAssistantContext;
+
+  if (
+    /\b(who is|about mukti|about muktar|tell me about (?:him|mukti|muktar|yourself)|introduce)\b/.test(
+      query
+    )
+  ) {
+    const { profile } = context;
+    const details = [
+      [profile.name, profile.title].filter(Boolean).join(" — "),
+      profile.introduction,
+      profile.educationSummary,
+      profile.interests,
+      profile.ambitions,
+    ].filter((detail): detail is string => Boolean(detail));
+
+    return details.length > 0
+      ? `${details.join("\n\n")}\n\nMore: /#about`
+      : "There is no published About information available right now.";
+  }
+
+  if (/\b(skills?|technologies|tech stack|programming languages)\b/.test(query)) {
+    const skills = context.publishedSkills
+      .map((skill) => skill.name)
+      .filter((name): name is string => Boolean(name));
+    return skills.length > 0
+      ? `Published skills: ${skills.join(", ")}.\n\nMore: /#skills`
+      : "There are no published skills available right now.";
+  }
+
+  if (/\b(projects?|portfolio work)\b/.test(query)) {
+    return context.projects.length > 0
+      ? `Published projects:\n${context.projects
+          .map((project) => `• ${project.title ?? "Project"}: ${project.portfolioPage}`)
+          .join("\n")}`
+      : "There are no published projects available right now.";
+  }
+
+  if (/\b(education|study|studies|university|certificates?|certifications?|experience)\b/.test(query)) {
+    const records = context.publishedExperienceEducationAndCertificates;
+    const summary = context.profile.educationSummary;
+    const entries = records.map((item) => {
+      const organization = item.organization ? ` — ${item.organization}` : "";
+      const dates = item.startYear
+        ? ` (${item.startYear}${item.endYear ? `–${item.endYear}` : ""})`
+        : "";
+      return `• ${item.title ?? item.kind}${organization}${dates}`;
+    });
+
+    if (summary) entries.unshift(summary);
+    return entries.length > 0
+      ? `${entries.join("\n")}\n\nMore: /#experience`
+      : "There is no published education or experience information available right now.";
+  }
+
+  if (/\b(contact|email|reach|github|linkedin|linked in)\b/.test(query)) {
+    const { profile } = context;
+    const links = [
+      profile.contactEmail && `Email: ${profile.contactEmail}`,
+      profile.github && `GitHub: ${profile.github}`,
+      profile.linkedIn && `LinkedIn: ${profile.linkedIn}`,
+      "Portfolio contact page: /contact",
+    ].filter((link): link is string => Boolean(link));
+    return links.join("\n");
+  }
+
+  return undefined;
 }
 
 export function buildPortfolioAssistantContext(data: PortfolioAssistantData) {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildPortfolioAssistantContext,
+  getPortfolioQuickAnswer,
   type PortfolioAssistantData,
 } from "@/lib/portfolio-assistant";
 
@@ -97,5 +98,31 @@ describe("portfolio assistant context", () => {
 
     expect(context.profile.introduction).toBeUndefined();
     expect(context.portfolioSections.about).toBeUndefined();
+  });
+
+  it("answers common portfolio questions instantly from published data", () => {
+    expect(getPortfolioQuickAnswer("Who is Mukti?", portfolio)).toContain(
+      "Muktar Abdulkader"
+    );
+    expect(getPortfolioQuickAnswer("What technologies does he use?", portfolio)).toContain(
+      "React"
+    );
+    expect(getPortfolioQuickAnswer("Tell me about his projects.", portfolio)).toContain(
+      "/projects/foodiego"
+    );
+    expect(getPortfolioQuickAnswer("How can I contact him?", portfolio)).toContain(
+      "hello@mukti.dev"
+    );
+    expect(getPortfolioQuickAnswer("What is his favorite food?", portfolio)).toBeUndefined();
+  });
+
+  it("does not include hidden About information in instant answers", () => {
+    const answer = getPortfolioQuickAnswer("Who is Mukti?", {
+      ...portfolio,
+      profile: { ...portfolio.profile, aboutVisible: false },
+    });
+
+    expect(answer).toContain("Muktar Abdulkader");
+    expect(answer).not.toContain("A software engineering student and developer.");
   });
 });
