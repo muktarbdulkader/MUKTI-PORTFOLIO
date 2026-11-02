@@ -81,6 +81,7 @@ export default async function RootLayout({
     <html
       lang={LANGUAGES[locale].tag.split("-")[0]}
       dir={LANGUAGES[locale].dir}
+      data-scroll-behavior="smooth"
       /* The theme boot script writes accent variables onto <html> before
          hydration — the mismatch is intentional and harmless. */
       suppressHydrationWarning

@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "ai": "^7.0.159",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.11.0",
     "clsx": "^2.1.1",
