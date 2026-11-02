@@ -35,7 +35,7 @@ function HeroGraphicCore({
         className="animate-pulse-glow pointer-events-none absolute inset-0 rounded-full"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgb(var(--accent-rgb) / 0.25) 0%, rgb(var(--accent-2-rgb) / 0.15) 50%, transparent 72%)",
+            "radial-gradient(ellipse at center, rgb(var(--accent-rgb) / 0.1) 0%, rgb(var(--accent-2-rgb) / 0.07) 50%, transparent 72%)",
         }}
         aria-hidden="true"
       />
@@ -48,7 +48,7 @@ function HeroGraphicCore({
         aria-hidden="true"
       >
         {/* Orbiting energy beacon */}
-        <span className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_14px_5px_rgb(var(--accent-rgb)/0.8)]" />
+        <span className="absolute -top-1.5 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-accent shadow-[0_0_8px_2px_rgb(var(--accent-rgb)/0.35)]" />
       </motion.div>
 
       {/* Spinning ring 2 (Reverse 3D tilted ring) */}
@@ -59,7 +59,7 @@ function HeroGraphicCore({
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
         aria-hidden="true"
       >
-        <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-accent-2 shadow-[0_0_12px_4px_rgb(var(--accent-2-rgb)/0.7)]" />
+        <span className="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-accent-2 shadow-[0_0_7px_2px_rgb(var(--accent-2-rgb)/0.3)]" />
       </motion.div>
 
       {/* Spinning ring 3 (Inner precision ring) */}
@@ -69,26 +69,26 @@ function HeroGraphicCore({
         transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
         aria-hidden="true"
       >
-        <span className="absolute bottom-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-violet/90 shadow-[0_0_10px_3px_rgba(167,139,250,0.6)]" />
+        <span className="absolute bottom-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-violet/70 shadow-[0_0_6px_2px_rgb(var(--accent-2-rgb)/0.25)]" />
       </motion.div>
 
       {/* ── Central High-Tech Developer Reactor Core (Pure Graphic Design) ── */}
       <motion.div
-        className="relative z-10 flex h-[165px] w-[165px] flex-col items-center justify-center rounded-3xl border border-accent/40 bg-surface/90 shadow-[0_0_70px_rgb(var(--accent-rgb)/0.4)] backdrop-blur-2xl sm:h-[195px] sm:w-[195px]"
+        className="relative z-10 flex h-[165px] w-[165px] flex-col items-center justify-center rounded-3xl border border-accent/25 bg-surface/90 shadow-[0_0_50px_rgb(var(--accent-rgb)/0.18)] backdrop-blur-2xl sm:h-[195px] sm:w-[195px]"
         animate={{ y: [0, -8, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       >
         {/* Animated aura frame */}
-        <div className="absolute -inset-0.5 -z-10 rounded-3xl bg-gradient-to-br from-accent/40 via-accent-2/30 to-violet/40 blur-sm" />
+        <div className="absolute -inset-0.5 -z-10 rounded-3xl bg-gradient-to-br from-accent/12 via-accent-2/8 to-violet/12 blur-sm" />
 
         {/* Central reactor badge */}
-        <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/40 bg-gradient-to-br from-accent/25 via-surface to-accent-2/20 shadow-[0_0_26px_rgb(var(--accent-rgb)/0.55)] sm:h-20 sm:w-20">
-          <Icon name="Code2" className="h-8 w-8 text-accent animate-pulse sm:h-9 sm:w-9" />
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/10 via-surface to-accent-2/8 shadow-[0_0_20px_rgb(var(--accent-rgb)/0.2)] sm:h-20 sm:w-20">
+          <Icon name="Code2" className="h-8 w-8 text-muted sm:h-9 sm:w-9" />
           <span className="absolute -inset-1 rounded-2xl border border-dashed border-accent-2/35 animate-spin-slow" />
         </div>
 
         <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-wider text-content">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="h-1.5 w-1.5 rounded-full bg-accent-2/70 animate-ping" />
           <span>&lt;FULL-STACK /&gt;</span>
         </div>
         <div className="mt-0.5 text-[10px] font-medium text-accent-2/80">
@@ -98,18 +98,18 @@ function HeroGraphicCore({
 
       {/* Floating badge: "Available for Projects" */}
       <motion.div
-        className="glass absolute -right-3 top-8 rounded-xl border border-emerald-500/30 px-3.5 py-2 text-xs font-medium text-emerald-400 shadow-xl backdrop-blur-md"
+        className="glass absolute -right-3 top-8 rounded-xl border border-border px-3.5 py-2 text-xs font-medium text-muted shadow-lg backdrop-blur-md"
         animate={{ y: [0, -5, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         aria-hidden="true"
       >
-        <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_3px_rgba(16,185,129,0.7)]" />
+        <span className="mr-2 inline-block h-2 w-2 rounded-full bg-accent-2 shadow-[0_0_5px_2px_rgb(var(--accent-2-rgb)/0.25)]" />
         {openToWork}
       </motion.div>
 
       {/* Floating badge: "Full-Stack & Systems" */}
       <motion.div
-        className="glass absolute -left-5 bottom-12 rounded-xl border border-accent-2/30 px-3.5 py-2 text-xs font-medium text-accent-2 shadow-xl backdrop-blur-md"
+        className="glass absolute -left-5 bottom-12 rounded-xl border border-accent-2/20 px-3.5 py-2 text-xs font-medium text-muted shadow-lg backdrop-blur-md"
         animate={{ y: [0, 5, 0] }}
         transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
         aria-hidden="true"

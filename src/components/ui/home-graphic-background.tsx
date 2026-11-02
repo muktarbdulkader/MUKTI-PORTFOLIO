@@ -190,7 +190,7 @@ function Network({
   /** Brighter, larger drawing for small screens */
   strong?: boolean;
 }) {
-  const lineOpacity = strong ? 0.38 : 0.22;
+  const lineOpacity = strong ? 0.28 : 0.18;
   const lineWidth = strong ? 1.5 : 1;
   const ringR = strong ? 14 : 11;
   const dotR = strong ? 4.5 : 3.5;
@@ -247,7 +247,7 @@ function Network({
                   />
                   <animate
                     attributeName="opacity"
-                    values="0.55;0"
+                    values="0.3;0"
                     dur="3.6s"
                     repeatCount="indefinite"
                   />
@@ -337,7 +337,7 @@ function Network({
             {t.text}
             <animate
               attributeName="opacity"
-              values="0;0.9;0.9;0"
+              values="0;0.55;0.55;0"
               keyTimes="0;0.12;0.8;1"
               dur={`${t.dur}s`}
               begin={`${t.begin}s`}
@@ -362,7 +362,7 @@ export function HomeGraphicBackground() {
         className="absolute -left-[20%] -top-[10%] aspect-square w-[90vw] rounded-full will-change-transform sm:w-[640px]"
         style={{
           background:
-            "radial-gradient(circle, rgb(var(--accent-rgb) / 0.16) 0%, transparent 68%)",
+            "radial-gradient(circle, rgb(var(--accent-rgb) / 0.07) 0%, transparent 68%)",
         }}
         animate={reduce ? undefined : { x: [0, 24, 0], y: [0, -16, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
@@ -371,7 +371,7 @@ export function HomeGraphicBackground() {
         className="absolute -bottom-[15%] -right-[25%] aspect-square w-[110vw] rounded-full will-change-transform sm:-right-[8%] sm:w-[760px]"
         style={{
           background:
-            "radial-gradient(circle, rgb(var(--accent-2-rgb) / 0.13) 0%, transparent 68%)",
+            "radial-gradient(circle, rgb(var(--accent-2-rgb) / 0.05) 0%, transparent 68%)",
         }}
         animate={reduce ? undefined : { x: [0, -28, 0], y: [0, 20, 0] }}
         transition={{

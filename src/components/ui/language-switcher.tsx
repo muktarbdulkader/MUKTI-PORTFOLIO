@@ -183,7 +183,7 @@ export function LanguageSwitcher({
                   {selected && (
                     <motion.span
                       layoutId={layoutId}
-                      className="absolute inset-0 rounded-xl bg-gradient-to-r from-accent/20 via-accent/10 to-transparent"
+                      className="absolute inset-0 rounded-xl border border-accent/5 bg-accent/5"
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                     />
                   )}
@@ -191,7 +191,7 @@ export function LanguageSwitcher({
                     className={cn(
                       "relative flex h-7 w-9 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold transition-colors",
                       selected
-                        ? "bg-gradient-to-br from-accent to-blue text-white shadow-[0_0_12px_rgb(var(--accent-rgb)/0.45)]"
+                        ? "bg-accent/10 text-content"
                         : "bg-elevated text-faint"
                     )}
                   >
@@ -204,7 +204,7 @@ export function LanguageSwitcher({
                   {selected && (
                     <Icon
                       name="Check"
-                      className="relative h-4 w-4 shrink-0 text-accent"
+                      className="relative h-4 w-4 shrink-0 text-muted"
                     />
                   )}
                 </button>

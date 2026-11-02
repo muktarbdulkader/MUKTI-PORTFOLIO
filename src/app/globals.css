@@ -130,11 +130,11 @@ body {
 .text-shine {
   background: linear-gradient(
     100deg,
-    #888888 0%,
-    #CCCCCC 25%,
-    #FFFFFF 46%,
-    #CCCCCC 68%,
-    #888888 100%
+    #999999 0%,
+    #B8B8B8 25%,
+    #DDDDDD 46%,
+    #B8B8B8 68%,
+    #999999 100%
   );
   background-size: 260% 100%;
   -webkit-background-clip: text;
@@ -257,7 +257,7 @@ body {
 }
 
 @keyframes pulse-ring {
-  0%   { transform: scale(0.85); opacity: 0.7; }
+  0%   { transform: scale(0.85); opacity: 0.4; }
   70%  { transform: scale(1.6); opacity: 0; }
   100% { transform: scale(1.6); opacity: 0; }
 }
@@ -310,17 +310,17 @@ body {
 }
 
 .aurora-blob-a {
-  background: radial-gradient(circle, rgba(255,255,255, 0.20), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255, 0.08), transparent 70%);
   animation: aurora-drift 22s ease-in-out infinite;
 }
 
 .aurora-blob-b {
-  background: radial-gradient(circle, rgba(180,180,180, 0.12), transparent 70%);
+  background: radial-gradient(circle, rgba(180,180,180, 0.05), transparent 70%);
   animation: aurora-drift-alt 28s ease-in-out infinite;
 }
 
 .aurora-blob-c {
-  background: radial-gradient(circle, rgba(255,255,255, 0.10), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255, 0.04), transparent 70%);
   animation: aurora-drift 34s ease-in-out infinite reverse;
 }
 
@@ -383,8 +383,8 @@ body {
   background: conic-gradient(
     from var(--angle),
     transparent 0%,
-    rgba(255,255,255,0.7) 18%,
-    rgba(180,180,180,0.5) 32%,
+    rgba(255,255,255,0.3) 18%,
+    rgba(180,180,180,0.2) 32%,
     transparent 52%,
     transparent 100%
   );
@@ -394,7 +394,7 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: spin-angle 6s linear infinite;
-  opacity: 0.75;
+  opacity: 0.5;
   pointer-events: none;
 }
 
@@ -412,14 +412,14 @@ body {
   border-radius: inherit;
   background: linear-gradient(
     120deg,
-    rgba(255,255,255,0.5),
-    rgba(180,180,180,0.3),
+    rgba(255,255,255,0.2),
+    rgba(180,180,180,0.12),
     transparent 45%
   );
   background-size: 200% 200%;
   animation: border-flow 6s ease infinite;
-  opacity: 0.6;
-  filter: blur(14px);
+  opacity: 0.35;
+  filter: blur(10px);
 }
 
 /* Infinite marquee band */
@@ -458,8 +458,8 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255,255,255,0.45),
-    rgba(200,200,200,0.35),
+    rgba(255,255,255,0.2),
+    rgba(200,200,200,0.12),
     transparent
   );
   background-size: 200% 100%;
