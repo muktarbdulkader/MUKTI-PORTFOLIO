@@ -26,6 +26,10 @@ export default async function PrivacyPage() {
           </h2>
           <p>{t("privacy.contactBody")}</p>
           <h2 className="text-lg font-semibold text-content">
+            {t("privacy.assistantTitle")}
+          </h2>
+          <p>{t("privacy.assistantBody")}</p>
+          <h2 className="text-lg font-semibold text-content">
             {t("privacy.emailTitle")}
           </h2>
           <p>{t("privacy.emailBody")}</p>

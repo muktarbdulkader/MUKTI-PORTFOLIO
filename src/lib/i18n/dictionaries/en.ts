@@ -249,6 +249,9 @@ export const en = {
     contactTitle: "Contact form",
     contactBody:
       "When you submit the contact form, your name, email address, inquiry type, subject, and message are stored securely in the site's database so the site owner can read and reply to your message. These submissions are never shown publicly.",
+    assistantTitle: "AI portfolio assistant",
+    assistantBody:
+      "Questions sent to Mukti AI are processed by Vercel AI Gateway and its selected model to generate replies using published portfolio information. The portfolio does not save chat conversations. The provider's own privacy and data-retention terms apply; do not share sensitive personal information in chat.",
     emailTitle: "Email delivery",
     emailBody:
       "If email delivery is configured, your message may also be forwarded to the site owner by email. No message is ever claimed to be delivered unless the email provider confirms it.",

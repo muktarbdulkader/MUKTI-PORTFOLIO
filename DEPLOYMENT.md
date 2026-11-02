@@ -44,6 +44,10 @@ Copy `.env.example` → `.env` and fill it in.
 | `AI_MODEL` | optional | AI Gateway model ID; defaults to `google/gemini-3-flash` |
 | `RATE_LIMIT_PORTFOLIO_ASSISTANT_PER_MINUTE` | optional | Assistant requests per IP per minute; defaults to `8` |
 
+The portfolio assistant shows a setup notice until `AI_GATEWAY_API_KEY` is configured.
+Set the key as a server-side secret; it is never sent to the browser. The Node runtime
+must be version 22 or newer for the AI SDK.
+
 ---
 
 ## 3. Deploy option A — Docker (recommended)

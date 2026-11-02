@@ -83,4 +83,19 @@ describe("portfolio assistant context", () => {
     expect(context.profile.introduction).toBe("Portfolio introduction.");
     expect(context.profile.contactEmail).toBeUndefined();
   });
+
+  it("does not expose about-only profile details when that section is hidden", () => {
+    const context = JSON.parse(
+      buildPortfolioAssistantContext({
+        ...portfolio,
+        profile: { ...portfolio.profile, aboutVisible: false },
+      })
+    ) as {
+      profile: Record<string, unknown>;
+      portfolioSections: Record<string, unknown>;
+    };
+
+    expect(context.profile.introduction).toBeUndefined();
+    expect(context.portfolioSections.about).toBeUndefined();
+  });
 });

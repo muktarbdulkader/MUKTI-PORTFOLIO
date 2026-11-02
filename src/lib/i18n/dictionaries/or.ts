@@ -242,6 +242,9 @@ export const or: Dictionary = {
     contactTitle: "Kootii qooqaa",
     contactBody:
       "Kootii qooqaa yoo kennuuf, maqaa kee, iimayilii kee, ga'aan, unummee, ergaa kee daatabase kee ammaa qabsiamee jira, in ergaa kee akkaatuu deebisuuf. Kootiin kana dhufu ergaan hundaa dhufuun argamaa.",
+    assistantTitle: "Gargaaraa AI portfolio",
+    assistantBody:
+      "Gaaffilee Mukti AI'itti ergaman odeeffannoo portfolio maxxanfame fayyadamuun deebii qopheessuuf Vercel AI Gateway fi moodeela filatameen qophaa'u. Portfolio haasa'icha hin kuusu. Dambii iccitii fi kuusaa daataa dhiyeessaa ni hojjeta; odeeffannoo dhuunfaa iccitii ta'e haasa'a keessatti hin qoodin.",
     emailTitle: "Iimayilii dabarsuu",
     emailBody:
       "Dabarsuu iimayilii yoo qabsiamee, ergaa kee iimayilii kee abbaa ta'e ni dabarfama. Ergaa dhugaa dhufuun ergaa dhugamee seenaa.",

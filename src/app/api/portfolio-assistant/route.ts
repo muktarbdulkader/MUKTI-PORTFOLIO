@@ -11,8 +11,6 @@ import {
 import { buildPortfolioAssistantContext } from "@/lib/portfolio-assistant";
 import { envInt, getClientIp, rateLimit } from "@/lib/rate-limit";
 
-export const runtime = "nodejs";
-
 const MAX_BODY_BYTES = 20_000;
 const MAX_MESSAGES = 12;
 const messagesSchema = z
@@ -136,7 +134,11 @@ export async function POST(request: Request) {
   }
 
   const parsed = requestSchema.safeParse(payload);
-  if (!parsed.success || parsed.data.messages.at(-1)?.role !== "user") {
+  if (
+    !parsed.success ||
+    parsed.data.messages[0]?.role !== "user" ||
+    parsed.data.messages.at(-1)?.role !== "user"
+  ) {
     return jsonResponse({ error: "INVALID_REQUEST" }, 400);
   }
 

@@ -11,7 +11,7 @@ type ChatMessage = {
   content: string;
 };
 
-type ProviderStatus = "unchecked" | "checking" | "ready" | "missing" | "unavailable";
+type ProviderStatus = "unchecked" | "ready" | "missing" | "unavailable";
 
 const MAX_HISTORY = 12;
 
@@ -150,10 +150,12 @@ export function PortfolioAssistant() {
     abortRef.current = controller;
 
     try {
+      const recentMessages = nextMessages.slice(-MAX_HISTORY);
+      if (recentMessages[0]?.role === "assistant") recentMessages.shift();
       const response = await fetch("/api/portfolio-assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages.slice(-MAX_HISTORY) }),
+        body: JSON.stringify({ messages: recentMessages }),
         signal: controller.signal,
       });
 
@@ -200,7 +202,11 @@ export function PortfolioAssistant() {
         setError(t("assistant.responseError"));
       }
     } catch (requestError) {
-      if (requestError instanceof Error && requestError.name === "AbortError") return;
+      if (requestError instanceof Error && requestError.name === "AbortError") {
+        setMessages(nextMessages);
+        return;
+      }
+      setMessages(nextMessages);
       setError(t("assistant.responseError"));
     } finally {
       if (abortRef.current === controller) {
@@ -343,7 +349,7 @@ export function PortfolioAssistant() {
                 </div>
               )}
 
-              {(providerStatus === "unchecked" || providerStatus === "checking") && (
+              {providerStatus === "unchecked" && (
                 <p className="text-xs text-muted" role="status">
                   {t("assistant.checking")}
                 </p>

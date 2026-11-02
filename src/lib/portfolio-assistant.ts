@@ -12,6 +12,7 @@ type AssistantProfile = {
   githubUrl?: string | null;
   linkedinUrl?: string | null;
   isAvailable?: boolean;
+  aboutVisible?: boolean;
 };
 
 type AssistantProject = {
@@ -112,17 +113,25 @@ function year(date: Date | null | undefined) {
 }
 
 export function buildPortfolioAssistantContext(data: PortfolioAssistantData) {
+  const aboutVisible = data.profile.aboutVisible !== false;
   const profile = {
     name: cleanText(data.profile.name, 120),
     title: cleanText(data.profile.title, 180),
-    introduction:
-      cleanText(data.profile.bio, 1600) ??
-      cleanText(data.profile.heroDescription, 1600),
-    interests: cleanText(data.profile.interests, 1000),
-    engineeringApproach: cleanText(data.profile.approach, 1000),
-    learningGoals: cleanText(data.profile.learningGoals, 1000),
-    ambitions: cleanText(data.profile.ambitions, 1000),
-    educationSummary: cleanText(data.profile.education, 1200),
+    introduction: aboutVisible
+      ? cleanText(data.profile.bio, 1600) ??
+        cleanText(data.profile.heroDescription, 1600)
+      : undefined,
+    interests: aboutVisible ? cleanText(data.profile.interests, 1000) : undefined,
+    engineeringApproach: aboutVisible
+      ? cleanText(data.profile.approach, 1000)
+      : undefined,
+    learningGoals: aboutVisible
+      ? cleanText(data.profile.learningGoals, 1000)
+      : undefined,
+    ambitions: aboutVisible ? cleanText(data.profile.ambitions, 1000) : undefined,
+    educationSummary: aboutVisible
+      ? cleanText(data.profile.education, 1200)
+      : undefined,
     openToWork: data.profile.isAvailable,
     contactEmail: safeEmail(data.contactEmail) ?? safeEmail(data.profile.publicEmail),
     github: safeUrl(data.profile.githubUrl),
@@ -167,10 +176,12 @@ export function buildPortfolioAssistantContext(data: PortfolioAssistantData) {
     {
       profile,
       portfolioSections: {
-        about: "/#about",
+        ...(aboutVisible ? { about: "/#about" } : {}),
         skills: "/#skills",
         projects: "/projects",
-        experienceAndEducation: "/#experience",
+        ...(data.experience.length > 0
+          ? { experienceAndEducation: "/#experience" }
+          : {}),
         contact: "/contact",
       },
       projects,
