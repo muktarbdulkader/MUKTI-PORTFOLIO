@@ -11,12 +11,13 @@ to manage every image the site needs once it is live.
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack, Cache Components) |
 | UI | React 19, Tailwind CSS v4, Framer Motion, lucide-react |
+| AI | Vercel AI SDK 7 + AI Gateway (optional portfolio assistant) |
 | Data | PostgreSQL via Prisma 7 (`@prisma/adapter-pg`, raw SQL — no Prisma Accelerate needed) |
 | Auth | Hand-rolled JWT session cookie (`jose` + `bcryptjs`) — no third-party auth |
 | Files | Cloudinary for public images when configured; local disk for private files/CVs and as a fallback |
 | Email | Optional — Resend (`RESEND_API_KEY`); without it, messages only land in the admin inbox |
 
-**You need:** a PostgreSQL database, a Node 20+ host, and a place for uploaded files that
+**You need:** a PostgreSQL database, a Node 22+ host, and a place for uploaded files that
 survives a redeploy.
 
 ---
@@ -39,6 +40,9 @@ Copy `.env.example` → `.env` and fill it in.
 | `RESEND_API_KEY` | optional | Enables email delivery of contact messages |
 | `CONTACT_NOTIFY_EMAIL` | optional | Where contact notifications are sent |
 | `RATE_LIMIT_*` | optional | In-memory limiter, per-minute caps |
+| `AI_GATEWAY_API_KEY` | optional | Enables Mukti AI. Create a key in Vercel AI Gateway and keep it server-side |
+| `AI_MODEL` | optional | AI Gateway model ID; defaults to `google/gemini-3-flash` |
+| `RATE_LIMIT_PORTFOLIO_ASSISTANT_PER_MINUTE` | optional | Assistant requests per IP per minute; defaults to `8` |
 
 ---
 
@@ -84,6 +88,8 @@ when `NODE_ENV=production`, so **HTTPS is required** or admin login will not sti
 ## 4. Deploy option B — VPS / any Node host
 
 ```bash
+nvm install 22
+nvm use 22
 git clone <repo> /srv/portifol && cd /srv/portifol
 npm ci
 cp .env.example .env && nano .env      # DATABASE_URL, AUTH_SECRET, SITE_URL …

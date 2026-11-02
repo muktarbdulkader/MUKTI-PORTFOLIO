@@ -188,6 +188,37 @@ export const am: Dictionary = {
     availabilityBody:
       "ለሙሉ ጊዜ ሥራ፣ ኢንተርንሽፕና የፍሪላንስ ፕሮጀክቶች እንቀንቀላለሁ። በመሰረት 24 ሰዓት ውስጥ መልስ እሰጣለሁ።",
   },
+  assistant: {
+    title: "Mukti AI",
+    subtitle: "የሙክቲ ፖርትፎሊዮ ረዳት",
+    open: "ከ Mukti AI ጋር ይወያዩ",
+    close: "ውይይቱን ዝጋ",
+    panelLabel: "የሙክቲ AI ፖርትፎሊዮ ረዳት",
+    welcome:
+      "ሰላም! እኔ የሙክቲ AI ረዳት ነኝ። ስለ ክህሎቶቹ፣ ፕሮጀክቶቹ፣ ትምህርቱ ወይም ልምዱ ይጠይቁኝ።",
+    checking: "የAI ረዳቱን ተገኝነት በመፈተሽ ላይ…",
+    setupTitle: "የAI ረዳት ማዋቀር ያስፈልጋል",
+    setupBody:
+      "የAI መልሶችን ለማንቃት AI_GATEWAY_API_KEY በሰርቨር አካባቢ ያክሉና መተግበሪያውን ዳግም ያስነሱ።",
+    statusUnavailable: "ረዳቱን አሁን ማረጋገጥ አልቻልኩም። እንደገና ይሞክሩ።",
+    retry: "እንደገና ይሞክሩ",
+    inputLabel: "ለMukti AI ጥያቄ ይጠይቁ",
+    placeholder: "ስለ ክህሎቶች፣ ፕሮጀክቶች ወይም ልምድ ይጠይቁ…",
+    send: "መልእክት ይላኩ",
+    thinking: "Mukti AI በማሰብ ላይ ነው",
+    responseError: "መልስ ማግኘት አልቻልኩም። ቆይተው እንደገና ይሞክሩ።",
+    portfolioUnavailable:
+      "የፖርትፎሊዮ መረጃ ለጊዜው አይገኝም። ቆይተው ይሞክሩ።",
+    rateLimited: "ብዙ ጥያቄዎች ቀርበዋል። ከ {seconds} ሰከንድ በኋላ ይሞክሩ።",
+    suggestionsLabel: "የጥያቄ ምሳሌዎች",
+    suggestions: {
+      who: "ሙክቲ ማን ነው?",
+      technologies: "የትኞቹን ቴክኖሎጂዎች ይጠቀማል?",
+      projects: "ስለ ፕሮጀክቶቹ ንገረኝ።",
+      strongest: "በልማት የበለጠ ጠንካራ ዘርፉ ምንድን ነው?",
+      contact: "እንዴት ልገናኘው እችላለሁ?",
+    },
+  },
   cta: {
     eyebrow: "እንደንዳን",
     titleLead: "በእርስዎ",

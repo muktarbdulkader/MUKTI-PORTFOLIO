@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ScrollProgress } from "@/components/ui/motion";
+import { PortfolioAssistant } from "@/components/assistant/portfolio-assistant";
 
 export default function PublicLayout({
   children,
@@ -18,6 +19,7 @@ export default function PublicLayout({
       <Suspense fallback={null}>
         <SiteFooter />
       </Suspense>
+      <PortfolioAssistant />
     </div>
   );
 }

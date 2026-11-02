@@ -187,6 +187,37 @@ export const or: Dictionary = {
     availabilityBody:
       "Hojii guutuu, internship, pirojektoota freelance qophaa'uu. Hojii irra 24 saati keessatti daawwuu.",
   },
+  assistant: {
+    title: "Mukti AI",
+    subtitle: "Gargaaraa Portfolio Mukti",
+    open: "Mukti AI waliin haasa'i",
+    close: "Haasa'icha cufi",
+    panelLabel: "Gargaaraa portfolio Mukti AI",
+    welcome:
+      "Akkam! Ani gargaaraa AI Mukti ti. Waa'ee dandeettii, pirojektoota, barnoota ykn muuxannoo isaa na gaafadhu.",
+    checking: "Gargaaraan AI jiraachuu isaa mirkaneessaa jira…",
+    setupTitle: "Qindaa'inni gargaaraa AI barbaachisa",
+    setupBody:
+      "Deebii AI dandeessisuuf AI_GATEWAY_API_KEY naannoo server irratti dabaliitii appicha deebisii jalqabi.",
+    statusUnavailable: "Amma gargaaraa mirkaneessuu hin dandeenye. Maaloo irra deebi'i.",
+    retry: "Irra deebi'i",
+    inputLabel: "Mukti AI gaaffii gaafadhu",
+    placeholder: "Dandeettii, pirojektoota ykn muuxannoo gaafadhu…",
+    send: "Ergaa ergi",
+    thinking: "Mukti AI yaadaa jira",
+    responseError: "Deebii argachuu hin dandeenye. Yeroo muraasa booda irra deebi'i.",
+    portfolioUnavailable:
+      "Odeeffannoon portfolio yeroo muraasaaf hin jiru. Maaloo booda irra deebi'i.",
+    rateLimited: "Amma gaaffii baay'ee. Sekondii {seconds} booda irra deebi'i.",
+    suggestionsLabel: "Gaaffilee gorfaman",
+    suggestions: {
+      who: "Mukti eenyu?",
+      technologies: "Teeknooloojiiwwan akkamii fayyadama?",
+      projects: "Waa'ee pirojektoota isaa natti himi.",
+      strongest: "Damee misoomaa isa cimaa maali?",
+      contact: "Akkamittan isa qunnamuu danda'a?",
+    },
+  },
   cta: {
     eyebrow: "Walqixa keenya",
     titleLead: "Pirojektoota",

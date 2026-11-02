@@ -191,6 +191,40 @@ export const en = {
     availabilityBody:
       "Open to full-time roles, internships, and freelance projects. Typically reply within 24h.",
   },
+  assistant: {
+    title: "Mukti AI",
+    subtitle: "Mukti's Portfolio Assistant",
+    open: "Chat with Mukti AI",
+    close: "Close chat",
+    panelLabel: "Mukti AI portfolio assistant",
+    welcome:
+      "Hi! I'm Mukti's AI assistant. Ask me about his skills, projects, education, or experience.",
+    checking: "Checking assistant availability…",
+    setupTitle: "AI assistant setup needed",
+    setupBody:
+      "To enable AI replies, add AI_GATEWAY_API_KEY to the server environment and restart the app.",
+    statusUnavailable:
+      "I couldn't check the assistant right now. Please try again.",
+    retry: "Try again",
+    inputLabel: "Ask Mukti AI a question",
+    placeholder: "Ask about skills, projects, or experience…",
+    send: "Send message",
+    thinking: "Mukti AI is thinking",
+    responseError:
+      "I couldn't get a response. Please try again in a moment.",
+    portfolioUnavailable:
+      "Portfolio information is temporarily unavailable. Please try again shortly.",
+    rateLimited:
+      "Too many questions just now. Please try again in {seconds} seconds.",
+    suggestionsLabel: "Suggested questions",
+    suggestions: {
+      who: "Who is Mukti?",
+      technologies: "What technologies does he use?",
+      projects: "Tell me about his projects.",
+      strongest: "What is his strongest area of development?",
+      contact: "How can I contact him?",
+    },
+  },
   cta: {
     eyebrow: "Let's connect",
     titleLead: "Have a project",
