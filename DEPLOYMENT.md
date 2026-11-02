@@ -11,7 +11,7 @@ to manage every image the site needs once it is live.
 |---|---|
 | Framework | Next.js 16 (App Router, Turbopack, Cache Components) |
 | UI | React 19, Tailwind CSS v4, Framer Motion, lucide-react |
-| AI | Vercel AI SDK 7 + Google Gemini API (optional portfolio assistant) |
+| Portfolio assistant | Local, data-backed answers from published portfolio content; no AI provider or API key required |
 | Data | PostgreSQL via Prisma 7 (`@prisma/adapter-pg`, raw SQL — no Prisma Accelerate needed) |
 | Auth | Hand-rolled JWT session cookie (`jose` + `bcryptjs`) — no third-party auth |
 | Files | Cloudinary for public images when configured; local disk for private files/CVs and as a fallback |
@@ -40,13 +40,12 @@ Copy `.env.example` → `.env` and fill it in.
 | `RESEND_API_KEY` | optional | Enables email delivery of contact messages |
 | `CONTACT_NOTIFY_EMAIL` | optional | Where contact notifications are sent |
 | `RATE_LIMIT_*` | optional | In-memory limiter, per-minute caps |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | optional | Enables Mukti AI. Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey) and keep it server-side |
-| `AI_MODEL` | optional | Gemini model ID; defaults to `gemini-3.8-flash` |
 | `RATE_LIMIT_PORTFOLIO_ASSISTANT_PER_MINUTE` | optional | Assistant requests per IP per minute; defaults to `8` |
 
-The portfolio assistant shows a setup notice until `GOOGLE_GENERATIVE_AI_API_KEY` is
-configured. Add it as a server-side secret in your deployment settings; it is never
-sent to the browser. The Node runtime must be version 22 or newer for the AI SDK.
+The portfolio assistant answers from published profile, skills, projects, experience,
+education, services, and contact information. It makes no third-party AI requests and
+requires no API key. If a detail is not in the published portfolio, it says so instead
+of guessing.
 
 ---
 

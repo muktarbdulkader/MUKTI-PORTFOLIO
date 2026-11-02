@@ -198,23 +198,14 @@ export const en = {
     close: "Close chat",
     panelLabel: "Mukti AI portfolio assistant",
     welcome:
-      "Hi! I'm Mukti's AI assistant. Ask me about his skills, projects, education, or experience.",
-    checking: "Checking assistant availability…",
-    setupTitle: "AI assistant setup needed",
-    setupBody:
-      "Instant answers about Mukti, his skills, projects, education, and contact work without an API key. Add GOOGLE_GENERATIVE_AI_API_KEY from Google AI Studio for other AI questions.",
-    statusUnavailable:
-      "I couldn't check the assistant right now. Please try again.",
-    retry: "Try again",
+      "Hi! I'm Mukti's portfolio assistant. Ask me about his skills, projects, education, experience, or anything listed on this portfolio.",
     inputLabel: "Ask Mukti AI a question",
     placeholder: "Ask about skills, projects, or experience…",
     send: "Send message",
     thinking: "Mukti AI is thinking",
     responseError:
       "I couldn't get a response. Please try again in a moment.",
-    aiUnavailable:
-      "Gemini isn't available right now. You can still ask about Mukti, his skills, projects, education, or contact for an instant portfolio answer.",
-    quickAnswerLabel: "Instant portfolio answer · not AI-generated",
+    quickAnswerLabel: "Based on published portfolio · instant answer",
     portfolioUnavailable:
       "Portfolio information is temporarily unavailable. Please try again shortly.",
     rateLimited:
@@ -254,7 +245,7 @@ export const en = {
       "When you submit the contact form, your name, email address, inquiry type, subject, and message are stored securely in the site's database so the site owner can read and reply to your message. These submissions are never shown publicly.",
     assistantTitle: "AI portfolio assistant",
     assistantBody:
-      "Questions sent to Mukti AI are processed by the Google Gemini API to generate replies using published portfolio information. The portfolio does not save chat conversations. Google's privacy and data-retention terms apply; do not share sensitive personal information in chat.",
+      "Questions sent to Mukti's portfolio assistant are used to find relevant details in published portfolio information. The portfolio does not save chat conversations.",
     emailTitle: "Email delivery",
     emailBody:
       "If email delivery is configured, your message may also be forwarded to the site owner by email. No message is ever claimed to be delivered unless the email provider confirms it.",

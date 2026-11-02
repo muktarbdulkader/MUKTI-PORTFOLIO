@@ -12,16 +12,10 @@ type ChatMessage = {
   source?: "portfolio";
 };
 
-type ProviderStatus = "unchecked" | "ready" | "missing" | "unavailable";
-
 const MAX_HISTORY = 12;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
-}
-
-function errorCode(value: unknown) {
-  return isRecord(value) && typeof value.error === "string" ? value.error : undefined;
 }
 
 function safeHref(value: string) {
@@ -85,7 +79,6 @@ export function PortfolioAssistant() {
   const { t } = useI18n();
   const reduceMotion = useReducedMotion() ?? false;
   const [open, setOpen] = useState(false);
-  const [providerStatus, setProviderStatus] = useState<ProviderStatus>("unchecked");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -100,27 +93,6 @@ export function PortfolioAssistant() {
     if (!open) return;
     inputRef.current?.focus();
   }, [open]);
-
-  useEffect(() => {
-    if (!open || providerStatus !== "unchecked") return;
-    let active = true;
-
-    fetch("/api/portfolio-assistant", { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok) throw new Error("Assistant status request failed");
-        return response.json() as Promise<{ configured?: unknown }>;
-      })
-      .then((data) => {
-        if (active) setProviderStatus(data.configured === true ? "ready" : "missing");
-      })
-      .catch(() => {
-        if (active) setProviderStatus("unavailable");
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [open, providerStatus]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({
@@ -162,17 +134,13 @@ export function PortfolioAssistant() {
 
       if (!response.ok) {
         const body: unknown = await response.json().catch(() => null);
-        const code = errorCode(body);
         if (response.status === 429) {
           const retryAfter =
             isRecord(body) && typeof body.retryAfterSeconds === "number"
               ? body.retryAfterSeconds
               : 60;
           setError(t("assistant.rateLimited", { seconds: retryAfter }));
-        } else if (code === "AI_NOT_CONFIGURED") {
-          setProviderStatus("missing");
-          setError(t("assistant.aiUnavailable"));
-        } else if (code === "PORTFOLIO_UNAVAILABLE") {
+        } else if (isRecord(body) && body.error === "PORTFOLIO_UNAVAILABLE") {
           setError(t("assistant.portfolioUnavailable"));
         } else {
           setError(t("assistant.responseError"));
@@ -180,44 +148,17 @@ export function PortfolioAssistant() {
         return;
       }
 
-      if (response.headers.get("content-type")?.includes("application/json")) {
-        const body: unknown = await response.json().catch(() => null);
-        if (
-          isRecord(body) &&
-          body.source === "portfolio" &&
-          typeof body.answer === "string" &&
-          body.answer.trim()
-        ) {
-          setMessages([
-            ...nextMessages,
-            { role: "assistant", content: body.answer, source: "portfolio" },
-          ]);
-        } else {
-          setError(t("assistant.responseError"));
-        }
-        return;
-      }
-
-      const reader = response.body?.getReader();
-      if (!reader) {
-        setError(t("assistant.responseError"));
-        return;
-      }
-
-      let answer = "";
-      const decoder = new TextDecoder();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        answer += decoder.decode(value, { stream: true });
-        if (answer) {
-          setMessages([...nextMessages, { role: "assistant", content: answer }]);
-        }
-      }
-      answer += decoder.decode();
-
-      if (answer.trim()) {
-        setMessages([...nextMessages, { role: "assistant", content: answer }]);
+      const body: unknown = await response.json().catch(() => null);
+      if (
+        isRecord(body) &&
+        body.source === "portfolio" &&
+        typeof body.answer === "string" &&
+        body.answer.trim()
+      ) {
+        setMessages([
+          ...nextMessages,
+          { role: "assistant", content: body.answer, source: "portfolio" },
+        ]);
       } else {
         setError(t("assistant.responseError"));
       }
@@ -376,29 +317,6 @@ export function PortfolioAssistant() {
                 </div>
               )}
 
-              {providerStatus === "unchecked" && (
-                <p className="text-xs text-muted" role="status">
-                  {t("assistant.checking")}
-                </p>
-              )}
-              {providerStatus === "missing" && (
-                <div className="rounded-xl border border-border bg-elevated/50 p-3.5">
-                  <p className="text-sm font-semibold text-content">{t("assistant.setupTitle")}</p>
-                  <p className="mt-1.5 text-xs leading-5 text-muted">{t("assistant.setupBody")}</p>
-                </div>
-              )}
-              {providerStatus === "unavailable" && (
-                <div className="rounded-xl border border-border bg-elevated/50 p-3.5">
-                  <p className="text-sm text-muted">{t("assistant.statusUnavailable")}</p>
-                  <button
-                    type="button"
-                    onClick={() => setProviderStatus("unchecked")}
-                    className="mt-2 text-xs font-semibold text-accent underline underline-offset-2"
-                  >
-                    {t("assistant.retry")}
-                  </button>
-                </div>
-              )}
               {error && (
                 <p className="rounded-xl border border-border bg-elevated/50 px-3.5 py-2.5 text-xs leading-5 text-muted" role="alert">
                   {error}

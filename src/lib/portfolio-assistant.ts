@@ -66,25 +66,40 @@ type PortfolioAssistantContext = {
     title?: string;
     introduction?: string;
     interests?: string;
+    engineeringApproach?: string;
+    learningGoals?: string;
     ambitions?: string;
     educationSummary?: string;
+    openToWork?: boolean;
     contactEmail?: string;
     github?: string;
     linkedIn?: string;
   };
   projects: Array<{
     title?: string;
+    purpose?: string;
+    category?: string;
+    role?: string;
+    technologies: string[];
+    features: Array<string | undefined>;
     portfolioPage: string;
     source?: string;
     liveDemo?: string;
   }>;
-  publishedSkills: Array<{ name?: string; category?: string }>;
+  publishedSkills: Array<{ name?: string; category?: string; details?: string }>;
   publishedExperienceEducationAndCertificates: Array<{
     kind: string;
     title?: string;
     organization?: string;
+    description?: string;
     startYear?: number;
     endYear?: number | "Present";
+    details?: string;
+  }>;
+  publishedServices: Array<{
+    title?: string;
+    description?: string;
+    details?: string;
   }>;
 };
 
@@ -143,78 +158,206 @@ function year(date: Date | null | undefined) {
 export function getPortfolioQuickAnswer(
   question: string,
   data: PortfolioAssistantData
-): string | undefined {
-  const query = question.toLowerCase();
+): string {
+  const query = question.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ");
   const context = JSON.parse(
     buildPortfolioAssistantContext(data)
   ) as PortfolioAssistantContext;
+  const { profile, projects, publishedSkills, publishedExperienceEducationAndCertificates: experience, publishedServices } = context;
+  const answerLabel = "Based on the published portfolio:";
 
   if (
-    /\b(who is|about mukti|about muktar|tell me about (?:him|mukti|muktar|yourself)|introduce)\b/.test(
-      query
-    )
+    /\b(who|introduce|background|bio|biography|yourself|interest|interests|goal|goals|ambition|approach|focus)\b/.test(query)
   ) {
-    const { profile } = context;
     const details = [
       [profile.name, profile.title].filter(Boolean).join(" — "),
       profile.introduction,
       profile.educationSummary,
       profile.interests,
+      profile.engineeringApproach,
+      profile.learningGoals,
       profile.ambitions,
     ].filter((detail): detail is string => Boolean(detail));
 
     return details.length > 0
-      ? `${details.join("\n\n")}\n\nMore: /#about`
-      : "There is no published About information available right now.";
+      ? `${answerLabel}\n${details.join("\n\n")}\n\nMore: /#about`
+      : `${answerLabel} About details are not published. See the [portfolio](/) or [contact page](/contact).`;
   }
 
-  if (/\b(skills?|technologies|tech stack|programming languages)\b/.test(query)) {
-    const skills = context.publishedSkills
-      .map((skill) => skill.name)
+  if (/\b(skill|technology|technologies|tech|stack|programming|language|backend|frontend|strength|strongest|area)\b/.test(query)) {
+    const skills = publishedSkills
+      .map((skill) =>
+        skill.name
+          ? `${skill.name}${skill.category ? ` (${skill.category})` : ""}`
+          : undefined
+      )
       .filter((name): name is string => Boolean(name));
+    const focus = profile.title ? `\nPortfolio title: ${profile.title}.` : "";
     return skills.length > 0
-      ? `Published skills: ${skills.join(", ")}.\n\nMore: /#skills`
-      : "There are no published skills available right now.";
+      ? `${answerLabel} ${skills.join(", ")}.${focus}\n\nThe portfolio does not rank skills by strength. More: /#skills`
+      : `${answerLabel} no skills are currently published. More: /#skills`;
   }
 
-  if (/\b(projects?|portfolio work)\b/.test(query)) {
-    return context.projects.length > 0
-      ? `Published projects:\n${context.projects
-          .map((project) => `• ${project.title ?? "Project"}: ${project.portfolioPage}`)
+  if (/\b(project|projects|portfolio|built|build|made|create|created|feature|features|demo|repository)\b/.test(query)) {
+    const matchingProjects = projects.filter((project) =>
+      project.title && query.includes(project.title.toLowerCase())
+    );
+    const relevantProjects = matchingProjects.length > 0 ? matchingProjects : projects;
+    return relevantProjects.length > 0
+      ? `${answerLabel}\n${relevantProjects
+          .map((project) => {
+            const details = [
+              project.purpose,
+              project.role && `Role: ${project.role}`,
+              project.category && `Category: ${project.category}`,
+              project.technologies.length > 0 && `Technologies: ${project.technologies.join(", ")}`,
+              project.features.length > 0 && `Features: ${project.features.filter(Boolean).join(", ")}`,
+              project.source && `GitHub: ${project.source}`,
+              project.liveDemo && `Live demo: ${project.liveDemo}`,
+            ].filter((detail): detail is string => typeof detail === "string");
+            return `• ${project.title ?? "Project"}: ${details.join(". ")}. [Project page](${project.portfolioPage})`;
+          })
           .join("\n")}`
-      : "There are no published projects available right now.";
+      : `${answerLabel} no projects are currently published. See [projects](/projects).`;
   }
 
-  if (/\b(education|study|studies|university|certificates?|certifications?|experience)\b/.test(query)) {
-    const records = context.publishedExperienceEducationAndCertificates;
-    const summary = context.profile.educationSummary;
-    const entries = records.map((item) => {
+  if (/\b(education|study|studies|university|certificate|certificates|certification|certifications|experience|career)\b/.test(query)) {
+    const entries = experience.map((item) => {
       const organization = item.organization ? ` — ${item.organization}` : "";
       const dates = item.startYear
         ? ` (${item.startYear}${item.endYear ? `–${item.endYear}` : ""})`
         : "";
-      return `• ${item.title ?? item.kind}${organization}${dates}`;
+      const description = item.description ? `: ${item.description}` : "";
+      const details = item.details ? ` ${item.details}` : "";
+      return `• ${item.title ?? item.kind}${organization}${dates}${description}${details}`;
     });
 
-    if (summary) entries.unshift(summary);
+    if (profile.educationSummary) entries.unshift(profile.educationSummary);
     return entries.length > 0
-      ? `${entries.join("\n")}\n\nMore: /#experience`
-      : "There is no published education or experience information available right now.";
+      ? `${answerLabel}\n${entries.join("\n")}\n\nMore: /#experience`
+      : `${answerLabel} education and experience details are not published.`;
   }
 
-  if (/\b(contact|email|reach|github|linkedin|linked in)\b/.test(query)) {
-    const { profile } = context;
+  if (/\b(contact|email|reach|github|linkedin|linked in|social)\b/.test(query)) {
     const links = [
       profile.contactEmail && `Email: ${profile.contactEmail}`,
       profile.github && `GitHub: ${profile.github}`,
       profile.linkedIn && `LinkedIn: ${profile.linkedIn}`,
       "Portfolio contact page: /contact",
     ].filter((link): link is string => Boolean(link));
-    return links.join("\n");
+    return `${answerLabel}\n${links.join("\n")}`;
   }
 
-  return undefined;
+  if (/\b(available|availability|hire|hiring|job|work|open to work)\b/.test(query)) {
+    return profile.openToWork === undefined
+      ? `${answerLabel} availability is not specified. See [contact](/contact).`
+      : profile.openToWork
+        ? `${answerLabel} Mukti is listed as available for work. See [contact](/contact).`
+        : `${answerLabel} Mukti is not currently listed as available for work. See [contact](/contact).`;
+  }
+
+  if (/\b(service|services|hire|freelance|offer|offers)\b/.test(query)) {
+    return publishedServices.length > 0
+      ? `${answerLabel}\n${publishedServices
+          .map((service) =>
+            [
+              service.title,
+              service.description,
+              service.details && `More: ${service.details}`,
+            ]
+              .filter(Boolean)
+              .join(": ")
+          )
+          .join("\n")}\n\nContact: /contact`
+      : `${answerLabel} no services are currently listed. You can still [contact Mukti](/contact).`;
+  }
+
+  const terms = [...new Set(
+    query
+      .split(/\s+/)
+      .filter((term) => term.length > 2 && !COMMON_QUERY_WORDS.has(term))
+  )];
+  const knowledge = [
+    profile.introduction
+      ? { text: profile.introduction, link: "/#about" }
+      : undefined,
+    profile.educationSummary
+      ? { text: profile.educationSummary, link: "/#experience" }
+      : undefined,
+    profile.interests ? { text: profile.interests, link: "/#about" } : undefined,
+    profile.engineeringApproach
+      ? { text: profile.engineeringApproach, link: "/#about" }
+      : undefined,
+    profile.learningGoals
+      ? { text: profile.learningGoals, link: "/#about" }
+      : undefined,
+    profile.ambitions ? { text: profile.ambitions, link: "/#about" } : undefined,
+    ...publishedSkills.map((skill) => ({
+      text: [skill.name, skill.category].filter(Boolean).join(" "),
+      link: "/#skills",
+    })),
+    ...projects.map((project) => ({
+      text: [
+        project.title,
+        project.purpose,
+        project.category,
+        project.role,
+        ...project.technologies,
+        ...project.features,
+      ]
+        .filter(Boolean)
+        .join(" "),
+      link: project.portfolioPage,
+    })),
+    ...experience.map((item) => ({
+      text: [item.title, item.organization, item.description, item.kind]
+        .filter(Boolean)
+        .join(" "),
+      link: "/#experience",
+    })),
+    ...publishedServices.map((service) => ({
+      text: [service.title, service.description].filter(Boolean).join(" "),
+      link: "/contact",
+    })),
+  ].filter((item): item is { text: string; link: string } => Boolean(item?.text));
+
+  const matches = knowledge
+    .map((item) => ({
+      ...item,
+      score: terms.reduce(
+        (score, term) => score + (item.text.toLowerCase().includes(term) ? 1 : 0),
+        0
+      ),
+    }))
+    .filter((item) => item.score > 0 && item.score / terms.length >= 0.6)
+    .sort((left, right) => right.score - left.score)
+    .slice(0, 3);
+
+  if (matches.length > 0) {
+    return `${answerLabel} I found these related details:\n${matches
+      .map((item) => `• ${item.text} [More](${item.link})`)
+      .join("\n")}`;
+  }
+
+  const overview = [
+    profile.name && profile.title && `${profile.name} — ${profile.title}.`,
+    profile.introduction,
+    publishedSkills.length > 0 &&
+      `Published skills: ${publishedSkills.map((skill) => skill.name).filter(Boolean).join(", ")}.`,
+    projects.length > 0 &&
+      `Projects: ${projects.map((project) => project.title).filter(Boolean).join(", ")}.`,
+  ].filter((detail): detail is string => typeof detail === "string");
+
+  return `That specific detail is not listed in Mukti's portfolio. ${overview.join(" ")}\n\nExplore [skills](/#skills), [projects](/projects), [experience](/#experience), or [contact](/contact).`;
 }
+
+const COMMON_QUERY_WORDS = new Set([
+  "about", "and", "are", "can", "could", "does", "for", "from", "his",
+  "how", "is", "mukti", "muktar", "of", "please", "tell", "that", "the",
+  "their", "them", "there", "this", "what", "when", "where", "which",
+  "who", "why", "with", "would", "built", "build", "made", "create",
+  "created", "using", "uses", "favorite", "food",
+]);
 
 export function buildPortfolioAssistantContext(data: PortfolioAssistantData) {
   const aboutVisible = data.profile.aboutVisible !== false;

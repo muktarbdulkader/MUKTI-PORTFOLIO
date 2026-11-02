@@ -113,7 +113,9 @@ describe("portfolio assistant context", () => {
     expect(getPortfolioQuickAnswer("How can I contact him?", portfolio)).toContain(
       "hello@mukti.dev"
     );
-    expect(getPortfolioQuickAnswer("What is his favorite food?", portfolio)).toBeUndefined();
+    expect(getPortfolioQuickAnswer("What is his favorite food?", portfolio)).toContain(
+      "That specific detail is not listed"
+    );
   });
 
   it("does not include hidden About information in instant answers", () => {

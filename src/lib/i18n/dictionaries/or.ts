@@ -194,21 +194,13 @@ export const or: Dictionary = {
     close: "Haasa'icha cufi",
     panelLabel: "Gargaaraa portfolio Mukti AI",
     welcome:
-      "Akkam! Ani gargaaraa AI Mukti ti. Waa'ee dandeettii, pirojektoota, barnoota ykn muuxannoo isaa na gaafadhu.",
-    checking: "Gargaaraan AI jiraachuu isaa mirkaneessaa jira…",
-    setupTitle: "Qindaa'inni gargaaraa AI barbaachisa",
-    setupBody:
-      "Waa'ee Mukti, dandeettii, pirojektoota, barnoota fi qunnamtii isaa deebii saffisaa argachuuf API key hin barbaachisu. Gaaffilee AI biroof GOOGLE_GENERATIVE_AI_API_KEY Google AI Studio irraa dabali.",
-    statusUnavailable: "Amma gargaaraa mirkaneessuu hin dandeenye. Maaloo irra deebi'i.",
-    retry: "Irra deebi'i",
+      "Akkam! Ani gargaaraa portfolio Mukti ti. Waa'ee dandeettii, pirojektoota, barnoota, muuxannoo ykn odeeffannoo portfolio irratti tarreeffame kamiyyuu na gaafadhu.",
     inputLabel: "Mukti AI gaaffii gaafadhu",
     placeholder: "Dandeettii, pirojektoota ykn muuxannoo gaafadhu…",
     send: "Ergaa ergi",
     thinking: "Mukti AI yaadaa jira",
     responseError: "Deebii argachuu hin dandeenye. Yeroo muraasa booda irra deebi'i.",
-    aiUnavailable:
-      "Gemini yeroo kana hin jiru. Waa'ee Mukti, dandeettii, pirojektoota, barnoota ykn qunnamtii isaa deebii portfolio saffisaa gaafachuu dandeessa.",
-    quickAnswerLabel: "Deebii portfolio saffisaa · AI miti",
+    quickAnswerLabel: "Odeeffannoo portfolio maxxanfame irratti hundaa'e · deebii saffisaa",
     portfolioUnavailable:
       "Odeeffannoon portfolio yeroo muraasaaf hin jiru. Maaloo booda irra deebi'i.",
     rateLimited: "Amma gaaffii baay'ee. Sekondii {seconds} booda irra deebi'i.",
@@ -247,7 +239,7 @@ export const or: Dictionary = {
       "Kootii qooqaa yoo kennuuf, maqaa kee, iimayilii kee, ga'aan, unummee, ergaa kee daatabase kee ammaa qabsiamee jira, in ergaa kee akkaatuu deebisuuf. Kootiin kana dhufu ergaan hundaa dhufuun argamaa.",
     assistantTitle: "Gargaaraa AI portfolio",
     assistantBody:
-      "Gaaffilee Mukti AI'itti ergaman odeeffannoo portfolio maxxanfame fayyadamuun deebii qopheessuuf Google Gemini API'n qophaa'u. Portfolio haasa'icha hin kuusu. Dambii iccitii fi kuusaa daataa Google ni hojjeta; odeeffannoo dhuunfaa iccitii ta'e haasa'a keessatti hin qoodin.",
+      "Gaaffileen gargaaraa portfolio Mukti'itti ergaman odeeffannoo maxxanfame keessatti odeeffannoo walqabatu argachuuf fayyadu. Portfolio haasa'icha hin kuusu.",
     emailTitle: "Iimayilii dabarsuu",
     emailBody:
       "Dabarsuu iimayilii yoo qabsiamee, ergaa kee iimayilii kee abbaa ta'e ni dabarfama. Ergaa dhugaa dhufuun ergaa dhugamee seenaa.",
